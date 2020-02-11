@@ -108,7 +108,7 @@ class Agent(Env):
 
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         observe = self._wrapped_env.reset()
-        o = self._vae(observe)
+        o = self._encode_image(observe)
         if self.n_command_history > 0:
             o = np.concatenate([o, np.asarray(self.action_history)], 0)
         return o
