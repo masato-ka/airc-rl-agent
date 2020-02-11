@@ -27,7 +27,7 @@ class Agent(Env):
         self.reward_callback = reward_callback
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
-                                            shape=(self.z_size + (self.n_commands * self.n_command_history), ),
+                                            shape=(self.z_dim + (self.n_commands * self.n_command_history), ),
                                             dtype=np.float32)
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space =spaces.Box(low=np.array([MIN_STEERING, -1]),
