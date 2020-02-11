@@ -71,7 +71,6 @@ class Agent(Env):
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
         z, _, _ = self.vae.encode(torch.stack((tensor,tensor),dim=0)[:-1].to(self.device))
-        self._show_debugger(np.asarray(croped)[:,:,::-1], z)
         return z.detach().cpu().numpy()[0]
 
     def _postprocess_observe(self,observe, action):
