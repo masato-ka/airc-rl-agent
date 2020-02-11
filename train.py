@@ -1,4 +1,6 @@
 import torch
+from stable_baselines import SAC
+from stable_baselines.sac.policies import SACPolicy
 
 from agent.agent import Agent
 from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT
@@ -10,6 +12,13 @@ from vae.vae import VAE
 
 VARIANTS_SIZE = 32
 image_channels = 3
+
+class CustomSACPolicy(SACPolicy):
+    def __init__(self, *args, **kwargs):
+        super(CustomSACPolicy, self).__init__(*args, **kwargs,
+                                              layers=[32, 16],
+                                              act_fun=tf.nn.elu,
+                                              feature_extraction="mlp")
 
 def calc_reward(action, e_i, done):
     if done:
@@ -30,12 +39,17 @@ if __name__ == '__main__':
     env = JetbotEnv()
     teleop = Teleoperator()
     agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
-    agent.reset()
-    for step in range(0,100):
-        o,r,d,i = agent.step(agent.action_space.sample())
-        if d:
-            agent.reset()
-    print("main ending.")
+
+    model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
+                gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
+    model.learn(total_timesteps=30000, log_interval=1)
+
+    # agent.reset()
+    # for step in range(0,100):
+    #     o,r,d,i = agent.step(agent.action_space.sample())
+    #     if d:
+    #         agent.reset()
+    # print("main ending.")
     exit(0)
 
 
@@ -43,7 +57,4 @@ if __name__ == '__main__':
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
     In gym_donkey, skip_frame parameter is 2 but modify to 1. 
     '''
-    # model = SAC(CustomSACPolicy, vae_env, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
-    #             gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
-    # model.learn(total_timesteps=30000, log_interval=1)
-    # model.save('donkey7')
+    #model.save('donkey7')
