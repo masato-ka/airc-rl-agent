@@ -37,6 +37,13 @@ class Agent(Env):
     def _calc_reward(self, action, done, i_e):
         pass
 
+    def _record_action(self, action):
+
+        if len(self.action_history) >= self.n_command_history * self.n_commands:
+            del self.action_history[:2]
+        for v in action:
+            self.action_history.append(v)
+
     def _scaled_action(self, action):
         #Convert from [-1, 1] to [0, 1]
         t = (action[1] + 1) / 2
