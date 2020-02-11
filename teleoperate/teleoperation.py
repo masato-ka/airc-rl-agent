@@ -9,11 +9,13 @@ class Teleoperator:
 
     def __init__(self):
         self.window = None
-
+        self.status = False
+        self.shutdown = False
     def start_process(self):
         self.process = Thread(target=self.main_loop)
         self.process.daemon = True
         self.process.start()
+
 
     def main_loop(self,):
 
@@ -26,10 +28,12 @@ class Teleoperator:
             self.window = pygame.display.set_mode(DISPLAY_SIZE, pygame.RESIZABLE)
             if keys[pygame.K_SPACE] and (time.time() - last_time_pressed['space']) > KEY_MIN_DELAY:
                 print('Press SPACE')
+                self.status = not self.status
                 last_time_pressed['space'] = time.time()
 
             if keys[pygame.K_ESCAPE] and (time.time() - last_time_pressed['space']) > KEY_MIN_DELAY:
                 end = True
+                self.shutdown = True
                 print('end')
                 last_time_pressed['escape'] = time.time()
 
@@ -37,5 +41,6 @@ class Teleoperator:
 if __name__ == '__main__':
     tele = Teleoperator()
     tele.start_process()
-    while True:
+    while not tele.shutdown:
+       print(tele.status)
        time.sleep(1)
