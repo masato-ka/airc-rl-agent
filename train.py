@@ -30,11 +30,14 @@ if __name__ == '__main__':
     env = JetbotEnv()
     teleop = Teleoperator()
     agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
-
+    agent.reset()
     for step in range(0,100):
         o,r,d,i = agent.step(agent.action_space.sample())
         if d:
             agent.reset()
+    print("main ending.")
+    exit(0)
+
 
     '''
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
