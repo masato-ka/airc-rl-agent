@@ -1,6 +1,6 @@
 import torch
 from stable_baselines import SAC
-from stable_baselines.sac.policies import SACPolicy
+from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
 import tensorflow as tf
 from agent.agent import Agent
 from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT
