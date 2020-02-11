@@ -59,7 +59,7 @@ class Agent(Env):
 
     def _encode_image(self, image):
         observe = PIL.Image.fromarray(image)
-        observe.resize(160,129)
+        observe.resize((160,120))
         croped = observe.crop((0, 40, 160, 120))
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
