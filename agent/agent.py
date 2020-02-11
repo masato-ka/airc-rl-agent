@@ -77,7 +77,8 @@ class Agent(Env):
         self._record_action(action)
         observe = self._encode_image(observe)
         if self.n_command_history > 0:
-            o = np.concatenate([observe, np.asarray(self.action_history)], 0)
+            observe = np.concatenate([observe, np.asarray(self.action_history)], 0)
+        return observe
 
 
     def step(self, action):
