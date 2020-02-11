@@ -1,3 +1,5 @@
+import time
+
 import torch
 
 import PIL
@@ -7,14 +9,17 @@ import numpy as np
 from gym import Env, spaces
 from torchvision.transforms import transforms
 
+from config import N_COMMAND_HISTORY, MAX_STEERING, MIN_STEERING, MIN_THROTTLE, MAX_THROTTLE, MAX_STEERING_DIFF
+
 
 class Agent(Env):
 
-    def __init__(self, _wrapper_evn, vae, reward_callback=None):
+    def __init__(self, _wrapper_evn, vae, teleop, reward_callback=None):
 
         self._wrapper_env = _wrapper_evn
         self.vae = vae
         self.z_dim = vae.z_dim
+        self.teleop = teleop
         self.reward_callback = reward_callback
         self.n_commands = 2
         self.n_command_history = N_COMMAND_HISTORY
@@ -26,6 +31,7 @@ class Agent(Env):
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space =spaces.Box(low=np.array([MIN_STEERING, -1]),
                                       high=np.array([MAX_STEERING, 1]), dtype=np.float32)
+        self.teleop.start_process()
 
     def _calc_reward(self, action, done, i_e):
         pass
@@ -74,7 +80,8 @@ class Agent(Env):
         observe = self._postprocess_observe(observe)
 
         #Override Done event.
-        done = np.math.fabs(e_i['cte']) > CTE_ERROR
+        done = self.teleop.status
+
 
         if self.reward_callback is not None:
             #Override reward.
@@ -84,6 +91,19 @@ class Agent(Env):
             self._wrapped_env.step(np.array([0.,0.]))
 
         return observe, reward, done, e_i
+
+    def reset(self):
+
+        # Waiting RESET for teleoperation.
+        while self.teleop:
+            time.sleep(0.1)
+
+        self.action_history = [0.] * (self.n_command_history * self.n_commands)
+        observe = self._wrapped_env.reset()
+        o = self._vae(observe)
+        if self.n_command_history > 0:
+            o = np.concatenate([o, np.asarray(self.action_history)], 0)
+        return o
 
 
     def render(self):
