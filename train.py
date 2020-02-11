@@ -20,7 +20,7 @@ def calc_reward(action, e_i, done):
 if __name__ == '__main__':
 
     model_path = 'vae.torch'
-    torch_device = 'gpu'
+    torch_device = 'cuda'
     vae = VAE(image_channels=image_channels, z_dim=VARIANTS_SIZE)
     vae.load_state_dict(torch.load(model_path, map_location=torch.device(torch_device)))
     vae.to(torch.device(torch_device))
