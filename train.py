@@ -1,7 +1,7 @@
 import torch
 from stable_baselines import SAC
 from stable_baselines.sac.policies import SACPolicy
-
+import tensorflow as tf
 from agent.agent import Agent
 from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT
 
@@ -15,10 +15,7 @@ image_channels = 3
 
 class CustomSACPolicy(SACPolicy):
     def __init__(self, *args, **kwargs):
-        super(CustomSACPolicy, self).__init__(*args, **kwargs,
-                                              layers=[32, 16],
-                                              act_fun=tf.nn.elu,
-                                              feature_extraction="mlp")
+        super(CustomSACPolicy, self).__init__(*args, **kwargs,layers=[32, 16],act_fun=tf.nn.elu,feature_extraction="mlp")
 
 def calc_reward(action, e_i, done):
     if done:
