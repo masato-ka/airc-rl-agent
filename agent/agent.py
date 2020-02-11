@@ -14,12 +14,13 @@ from config import N_COMMAND_HISTORY, MAX_STEERING, MIN_STEERING, MIN_THROTTLE, 
 
 class Agent(Env):
 
-    def __init__(self, _wrapper_evn, vae, teleop, reward_callback=None):
+    def __init__(self, _wrapper_evn, vae, teleop,device,  reward_callback=None):
 
         self._wrapper_env = _wrapper_evn
         self.vae = vae
         self.z_dim = vae.z_dim
         self.teleop = teleop
+        self.device = device
         self.reward_callback = reward_callback
         self.n_commands = 2
         self.n_command_history = N_COMMAND_HISTORY
@@ -58,6 +59,7 @@ class Agent(Env):
 
     def _encode_image(self, image):
         observe = PIL.Image.fromarray(image)
+        observe.resize(160,129)
         croped = observe.crop((0, 40, 160, 120))
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
