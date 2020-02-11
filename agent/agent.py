@@ -85,8 +85,7 @@ class Agent(Env):
 
         action = self._preprocess_action(action)
         observe, reward, done, e_i = self._wrapped_env.step(action)
-        observe = self._postprocess_observe(observe)
-        observe = self._postprocess_observe(observe)
+        observe = self._postprocess_observe(observe,action)
 
         #Override Done event.
         done = self.teleop.status
