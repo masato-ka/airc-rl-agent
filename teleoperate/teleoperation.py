@@ -23,11 +23,14 @@ class Teleoperator:
     def set_current_image(self, image):
         self.current_image = image
 
+    def clear(self):
+        self.window.fill((0, 0, 0))
+
     def _update_screen(self):
 
         if self.windonw is None:
             return
-
+        self.clear()
         if self.current_image is not None:
             current_image = np.swapaxes(self.current_image, 0, 1)
             if self.image_surface is None:
@@ -38,12 +41,13 @@ class Teleoperator:
     def main_loop(self,):
 
         pygame.init()
+        self.window = pygame.display.set_mode(DISPLAY_SIZE, pygame.RESIZABLE)
+
         end = False
 
         last_time_pressed = {'space': 0, 'escape':0, 'm': 0, 't': 0, 'b': 0, 'o': 0}
         while not end:
             keys = pygame.key.get_pressed()
-            self.window = pygame.display.set_mode(DISPLAY_SIZE, pygame.RESIZABLE)
             if keys[pygame.K_SPACE] and (time.time() - last_time_pressed['space']) > KEY_MIN_DELAY:
                 print('Press SPACE')
                 self.status = not self.status
@@ -55,7 +59,7 @@ class Teleoperator:
                 print('end')
                 last_time_pressed['escape'] = time.time()
             self._update_screen()
-
+            pygame.display.flip()
 
 if __name__ == '__main__':
     tele = Teleoperator()
