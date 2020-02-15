@@ -89,7 +89,7 @@ class Agent(Env):
 
         #Override Done event.
         done = self.teleop.status
-
+        self.teleop.set_current_image(observe)
 
         if self.reward_callback is not None:
             #Override reward.

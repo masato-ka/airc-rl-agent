@@ -1,3 +1,4 @@
+import numpy as np
 import time
 from threading import Thread
 
@@ -11,11 +12,28 @@ class Teleoperator:
         self.window = None
         self.status = False
         self.shutdown = False
+        self.current_image = None
+
     def start_process(self):
         self.process = Thread(target=self.main_loop)
         self.process.daemon = True
         self.process.start()
 
+
+    def set_current_image(self, image):
+        self.current_image = image
+
+    def _update_screen(self):
+
+        if self.windonw is None:
+            return
+
+        if self.current_image is not None:
+            current_image = np.swapaxes(self.current_image, 0, 1)
+            if self.image_surface is None:
+                self.image_surface = pygame.pixelcopy.make_surface(current_image)
+            pygame.pixelcopy.array_to_surface(self.image_surface, current_image)
+            self.window.blit(self.image_surface, (20, 350))
 
     def main_loop(self,):
 
