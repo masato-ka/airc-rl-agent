@@ -33,10 +33,9 @@ class Teleoperator:
 
     def _update_screen(self):
 
-        if self.windonw is None:
+        if self.window is None:
             return
         self.clear()
-
         help_str = 'Use arrow keys to move, q or ESCAPE to exit.'
         self.write_text(help_str, 20, 50, SMALL_FONT)
 
@@ -54,8 +53,9 @@ class Teleoperator:
 
         end = False
 
-        last_time_pressed = {'space': 0, 'escape':0, 'm': 0, 't': 0, 'b': 0, 'o': 0}
+        last_time_pressed = {'space': 0, 'escape': 0, 'm': 0, 't': 0, 'b': 0, 'o': 0}
         while not end:
+            pygame.event.pump()
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE] and (time.time() - last_time_pressed['space']) > KEY_MIN_DELAY:
                 print('Press SPACE')
@@ -68,7 +68,7 @@ class Teleoperator:
                 print('end')
                 last_time_pressed['escape'] = time.time()
             self._update_screen()
-            pygame.display.flip()
+            pygame.display.update()
 
 if __name__ == '__main__':
     tele = Teleoperator()
