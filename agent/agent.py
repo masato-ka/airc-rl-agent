@@ -68,9 +68,12 @@ class Agent(Env):
         observe = PIL.Image.fromarray(image)
         observe.resize((160,120))
         croped = observe.crop((0, 40, 160, 120))
+        self.teleop.set_current_image(croped)
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
         z, _, _ = self.vae.encode(torch.stack((tensor,tensor),dim=0)[:-1].to(self.device))
+        reconst_image = self.vae.decode(z)
+        self.teleop.set_reconst_image(reconst_image.detach().cpu().numpy()[0])
         return z.detach().cpu().numpy()[0]
 
     def _postprocess_observe(self,observe, action):
@@ -89,7 +92,6 @@ class Agent(Env):
 
         #Override Done event.
         done = self.teleop.status
-        self.teleop.set_current_image(observe)
 
         if self.reward_callback is not None:
             #Override reward.
