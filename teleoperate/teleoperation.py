@@ -47,7 +47,7 @@ class Teleoperator:
         self.write_text(help_str, 20, 50, SMALL_FONT)
 
         if self.current_image is not None:
-           current_image = self.current_image
+            current_image = self.current_image
             #current_image = np.swapaxes(self.current_image, 0, 1)
             if self.image_surface is None:
                 self.image_surface = pygame.pixelcopy.make_surface(current_image)
