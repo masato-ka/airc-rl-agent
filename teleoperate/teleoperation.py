@@ -6,6 +6,9 @@ import pygame
 
 DISPLAY_SIZE = (800,600)
 KEY_MIN_DELAY = 1
+
+SMALL_FONT = pygame.font.SysFont('Open Sans', 20)
+
 class Teleoperator:
 
     def __init__(self):
@@ -31,6 +34,10 @@ class Teleoperator:
         if self.windonw is None:
             return
         self.clear()
+
+        help_str = 'Use arrow keys to move, q or ESCAPE to exit.'
+        self.write_text(help_str, 20, 50, SMALL_FONT)
+
         if self.current_image is not None:
             current_image = np.swapaxes(self.current_image, 0, 1)
             if self.image_surface is None:
