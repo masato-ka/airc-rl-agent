@@ -20,6 +20,7 @@ class Teleoperator:
         self.status = False
         self.shutdown = False
         self.current_image = None
+        self.image_surface = None
 
     def start_process(self):
         self.process = Thread(target=self.main_loop)
