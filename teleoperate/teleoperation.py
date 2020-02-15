@@ -7,7 +7,9 @@ import pygame
 DISPLAY_SIZE = (800,600)
 KEY_MIN_DELAY = 1
 
+pygame.font.init()
 SMALL_FONT = pygame.font.SysFont('Open Sans', 20)
+
 
 class Teleoperator:
 
