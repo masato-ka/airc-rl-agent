@@ -63,8 +63,7 @@ class Teleoperator:
             self.window.blit(self.image_surface, (20, 350))
 
         if self.reconst_image is not None:
-
-            reconst_image = np.swapaxes(self.reconst_image, 2, 1)
+            reconst_image = np.swapaxes(self.reconst_image, 0, 1)
             print(reconst_image.shape)
             if self.decoded_surface is None:
                 self.decoded_surface = pygame.pixelcopy.make_surface(reconst_image)
