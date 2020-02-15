@@ -64,6 +64,7 @@ class Teleoperator:
         while not end:
             pygame.event.pump()
             keys = pygame.key.get_pressed()
+            time.sleep(0.1)
             if keys[pygame.K_SPACE] and (time.time() - last_time_pressed['space']) > KEY_MIN_DELAY:
                 print('Press SPACE')
                 self.status = not self.status
