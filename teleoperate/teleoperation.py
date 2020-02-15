@@ -54,6 +54,7 @@ class Teleoperator:
                 self.shutdown = True
                 print('end')
                 last_time_pressed['escape'] = time.time()
+            self._update_screen()
 
 
 if __name__ == '__main__':
