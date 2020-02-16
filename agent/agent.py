@@ -75,7 +75,7 @@ class Agent(Env):
         reconst_image = self.vae.decode(z)
         r = reconst_image[0].transpose(0, 2).transpose(0, 1)
         reconst_image = r.detach().cpu().numpy()[:,:,::-1]
-        reconst_image = PIL.Image.fromarray(np.uint(reconst_image*255))
+        reconst_image = PIL.Image.fromarray(np.uint8(reconst_image*255))
         self.teleop.set_reconst_image(reconst_image)
         return z.detach().cpu().numpy()[0]
 
