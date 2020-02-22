@@ -3,7 +3,7 @@ import time
 
 import torch
 
-import Jetbot import Camera
+from Jetbot import Camera
 import cv2
 from torchvision.transforms import transforms
 
