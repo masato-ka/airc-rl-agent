@@ -32,7 +32,7 @@ class Agent(Env):
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space =spaces.Box(low=np.array([MIN_STEERING, -1]),
                                       high=np.array([MAX_STEERING, 1]), dtype=np.float32)
-        self.teleop.start_process()
+        #self.teleop.start_process()
 
     def _calc_reward(self, action, done, i_e):
         pass
@@ -68,15 +68,15 @@ class Agent(Env):
         observe = PIL.Image.fromarray(image)
         observe = observe.resize((160,120))
         croped = observe.crop((0, 40, 160, 120))
-        self.teleop.set_current_image(croped)
+        #self.teleop.set_current_image(croped)
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
         z, _, _ = self.vae.encode(torch.stack((tensor,tensor),dim=0)[:-1].to(self.device))
-        reconst_image = self.vae.decode(z)
-        r = reconst_image[0].transpose(0, 2).transpose(0, 1)
-        reconst_image = r.detach().cpu().numpy()
-        reconst_image = PIL.Image.fromarray(np.uint8(reconst_image*255))
-        self.teleop.set_reconst_image(reconst_image)
+        # reconst_image = self.vae.decode(z)
+        # r = reconst_image[0].transpose(0, 2).transpose(0, 1)
+        # reconst_image = r.detach().cpu().numpy()
+        # reconst_image = PIL.Image.fromarray(np.uint8(reconst_image*255))
+        # self.teleop.set_reconst_image(reconst_image)
         return z.detach().cpu().numpy()[0]
 
     def _postprocess_observe(self,observe, action):
