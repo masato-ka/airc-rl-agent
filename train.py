@@ -9,6 +9,7 @@ from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT
 
 from jetbot_env import JetbotEnv
 
+from teleoperate.sock_teleop import TeleopSocket
 from teleoperate.teleoperation import Teleoperator
 from vae.vae import VAE
 
@@ -36,7 +37,8 @@ if __name__ == '__main__':
     vae.eval()
 
     env = JetbotEnv()
-    teleop = Teleoperator()
+    # teleop = Teleoperator()
+    teleop = TeleopSocket()
     agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
     #
     # model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
