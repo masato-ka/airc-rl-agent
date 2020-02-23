@@ -7,6 +7,8 @@ from Jetbot import Camera
 import cv2
 from torchvision.transforms import transforms
 
+from agent.agent import Agent
+from teleoperate.teleoperation import Teleoperator
 from vae.vae import VAE
 
 image_channels = 3
@@ -35,7 +37,9 @@ if __name__ == '__main__':
     camera.start()
 
 
-
+    env = JetbotEnv()
+    teleop = Teleoperator()
+    agent = Agent(env, vae, teleop=teleop, device='cuda', reward_callback=calc_reward)
     while True:
         start = time.time()
 
