@@ -1,3 +1,5 @@
+import time
+
 import torch
 from stable_baselines import SAC
 from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
@@ -43,9 +45,12 @@ if __name__ == '__main__':
 
     agent.reset()
     for step in range(0,100):
+        start = time.time()
         o,r,d,i = agent.step(agent.action_space.sample())
         if d:
             agent.reset()
+        elasped = time.time() - start
+        print('Elasped {}'.format(elasped))
     print("main ending.")
     exit(0)
 
