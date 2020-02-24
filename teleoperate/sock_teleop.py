@@ -1,7 +1,6 @@
+import time
 from threading import Thread
-
-import zmq
-
+import posix_ipc
 
 class TeleopSocket:
 
@@ -17,15 +16,22 @@ class TeleopSocket:
 
 
     def start_server(self):
-        context = zmq.Context()
-        socket = context.socket(zmq.REP)
-        socket.bind('tcp://*:5556')
-        print('================START SERVER=============')
+
+        mq = posix_ipc.MessageQueue("/my_q01", posix_ipc.O_CREAT )
+    #
         while True:
-            message = socket.recv_string()
-            print(message)
-        socket.close()
-        context.destroy()
+            data = mq.receive()
+            print( data[0] )
+            time.sleep(1)
+        # context = zmq.Context()
+        # socket = context.socket(zmq.REP)
+        # socket.bind('tcp://*:5556')
+        # print('================START SERVER=============')
+        # while True:
+        #     message = socket.recv_string()
+        #     print(message)
+        # socket.close()
+        # context.destroy()
 
 
 
