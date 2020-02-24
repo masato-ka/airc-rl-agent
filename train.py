@@ -46,9 +46,12 @@ if __name__ == '__main__':
     # model.learn(total_timesteps=30000, log_interval=1)
 
     agent.reset()
+    print('========RESET=============')
     for step in range(0,100):
+        print('========STEP=============')
         start = time.time()
         o,r,d,i = agent.step(agent.action_space.sample())
+        print('========AFTER STEP=============')
         if d:
             agent.reset()
         elasped = time.time() - start
