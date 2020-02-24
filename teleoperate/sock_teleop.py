@@ -22,7 +22,7 @@ class TeleopSocket:
     #
         while True:
             data = mq.receive()
-            message = json.dumps(data[0])
+            message = json.loads(data[0])
 
             if type(message['status']) == type(True):
                 self.status = message['status']
