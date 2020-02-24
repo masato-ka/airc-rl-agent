@@ -106,7 +106,7 @@ class Agent(Env):
         return observe, reward, done, e_i
 
     def reset(self):
-
+        print('====RESET')
         # Waiting RESET for teleoperation.
         while self.teleop.status:
             print(self.teleop.status)

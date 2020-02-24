@@ -11,7 +11,7 @@ class TeleopSocket:
         self.shutdown = False
 
     def start_process(self):
-        self.process = Thread(target=self.start_server())
+        self.process = Thread(target=self.start_server)
         self.process.daemon = True
         self.process.start()
 
