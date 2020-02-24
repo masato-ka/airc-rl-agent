@@ -1,6 +1,7 @@
 import time
 from threading import Thread
 import posix_ipc
+import json
 
 class TeleopSocket:
 
@@ -21,8 +22,12 @@ class TeleopSocket:
     #
         while True:
             data = mq.receive()
-            print( data[0] )
-            time.sleep(1)
+            message = json.dumps(data[0])
+
+            if type(message['status']) == type(True):
+                self.status = message['status']
+                print(self.status)
+            time.sleep(0.01)
         # context = zmq.Context()
         # socket = context.socket(zmq.REP)
         # socket.bind('tcp://*:5556')
