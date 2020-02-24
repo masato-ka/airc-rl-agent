@@ -41,21 +41,21 @@ if __name__ == '__main__':
     teleop = TeleopSocket()
     agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
     #
-    # model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
-    #             gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
-    # model.learn(total_timesteps=30000, log_interval=1)
-    agent.reset()
-    print('========RESET=============')
-    for step in range(0,100):
-        print('========STEP=============')
-        start = time.time()
-        o,r,d,i = agent.step(agent.action_space.sample())
-        print('========AFTER STEP=============')
-        if d:
-            agent.reset()
-        elasped = time.time() - start
-        print('Elasped {}'.format(elasped))
-    print("main ending.")
+    model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
+                gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
+    model.learn(total_timesteps=30000, log_interval=1)
+    # agent.reset()
+    # print('========RESET=============')
+    # for step in range(0,100):
+    #     print('========STEP=============')
+    #     start = time.time()
+    #     o,r,d,i = agent.step(agent.action_space.sample())
+    #     print('========AFTER STEP=============')
+    #     if d:
+    #         agent.reset()
+    #     elasped = time.time() - start
+    #     print('Elasped {}'.format(elasped))
+    # print("main ending.")
     exit(0)
 
 
