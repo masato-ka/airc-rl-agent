@@ -7,7 +7,8 @@ class TeleopSocket:
 
 
     def __init__(self):
-        pass
+        self.status = False
+        self.shutdown = False
 
     def start_process(self):
         self.process = Thread(target=self.start_server())
