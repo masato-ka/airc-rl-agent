@@ -1,24 +1,19 @@
-import time
-
+import argparse
 import torch
 from stable_baselines import SAC
-from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
-import tensorflow as tf
 from agent.agent import Agent
-from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT
+from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT, VARIANTS_SIZE, \
+    IMAGE_CHANNELS, VERBOSE, BATCH_SIZE, BUFFER_SIZE, LEARNING_STARTS, GRADIENT_STEPS, TRAIN_FREQ, ENT_COEF, \
+    LEARNING_RATE, LOG_INTERVAL
 
 from jetbot_env import JetbotEnv
 
-from teleoperate.sock_teleop import TeleopSocket
-from teleoperate.teleoperation import Teleoperator
+from sac import CustomSACPolicy
+from teleoperate import Teleoperator
 from vae.vae import VAE
 
-VARIANTS_SIZE = 32
-image_channels = 3
 
-class CustomSACPolicy(SACPolicy):
-    def __init__(self, *args, **kwargs):
-        super(CustomSACPolicy, self).__init__(*args, **kwargs,layers=[32, 16],act_fun=tf.nn.elu,feature_extraction="mlp")
+robot_drivers = {'jetbot':JetbotEnv}
 
 def calc_reward(action, e_i, done):
     if done:
@@ -27,40 +22,49 @@ def calc_reward(action, e_i, done):
     throttle_reward = THROTTLE_REWARD_WEIGHT * (action[1] / MAX_THROTTLE)
     return 1 + throttle_reward
 
+def load_vae(model_path, variants_size, image_channels, device):
+    vae = VAE(image_channels=image_channels, z_dim=variants_size)
+    vae.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
+    vae.to(torch.device(device)).eval()
+    return vae
+
+def create_agent(robot_driver, vae, torch_device):
+    env = robot_driver()
+    teleop = Teleoperator()
+    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
+    return agent
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-vae', '--vae-path', help='Path to a trained vae model path.',
+                    default='vae.torch', type=str)
+parser.add_argument('-device', '--device', help='torch device {"cpu" | "cuda"}',
+                    default='cuda', type=str)
+parser.add_argument('-robot', '--robot-driver', help='choose robot driver',
+                    default='jetbot', type=str)
+parser.add_argument('-steps', '--time-steps', help='total step.',
+                    default='5000', type=int)
+parser.add_argument('-s', '--save', help='save model file name.',
+                    defaults='model', type=str)
+
+
 if __name__ == '__main__':
 
-    model_path = 'vae.torch'
-    torch_device = 'cuda'
-    vae = VAE(image_channels=image_channels, z_dim=VARIANTS_SIZE)
-    vae.load_state_dict(torch.load(model_path, map_location=torch.device(torch_device)))
-    vae.to(torch.device(torch_device))
-    vae.eval()
+    args = parser.parse_args()
 
-    env = JetbotEnv()
-    # teleop = Teleoperator()
-    teleop = TeleopSocket()
-    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=calc_reward)
+    torch_device = args.device
+
+    vae = load_vae(args.vae_path, VARIANTS_SIZE, IMAGE_CHANNELS, torch_device)
+    agent = create_agent(robot_drivers[args.robot_driver], vae, torch_device)
+
     #
-    model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
-                gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
-    model.learn(total_timesteps=30000, log_interval=1)
-    # agent.reset()
-    # print('========RESET=============')
-    # for step in range(0,100):
-    #     print('========STEP=============')
-    #     start = time.time()
-    #     o,r,d,i = agent.step(agent.action_space.sample())
-    #     print('========AFTER STEP=============')
-    #     if d:
-    #         agent.reset()
-    #     elasped = time.time() - start
-    #     print('Elasped {}'.format(elasped))
-    # print("main ending.")
-    exit(0)
-
-
+    model = SAC(CustomSACPolicy, agent, verbose=VERBOSE, batch_size=BATCH_SIZE, buffer_size=BUFFER_SIZE,
+                learning_starts=LEARNING_STARTS, gradient_steps=GRADIENT_STEPS, train_freq=TRAIN_FREQ,
+                ent_coef=ENT_COEF, learning_rate=LEARNING_RATE)
+    model.learn(total_timesteps=args.time_steps, log_interval=LOG_INTERVAL)
     '''
+    WARNING.
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
     In gym_donkey, skip_frame parameter is 2 but modify to 1. 
     '''
-    #model.save('donkey7')
+    model.save(args.save)
