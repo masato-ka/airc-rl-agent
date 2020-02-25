@@ -10,7 +10,6 @@ from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT
 from jetbot_env import JetbotEnv
 
 from teleoperate.sock_teleop import TeleopSocket
-from teleoperate.teleoperation import Teleoperator
 from vae.vae import VAE
 
 VARIANTS_SIZE = 32
@@ -44,23 +43,9 @@ if __name__ == '__main__':
     model = SAC(CustomSACPolicy, agent, verbose=1, batch_size=64, buffer_size=30000, learning_starts=300,
                 gradient_steps=600, train_freq=1, ent_coef='auto_0.1', learning_rate=3e-4)
     model.learn(total_timesteps=30000, log_interval=1)
-    # agent.reset()
-    # print('========RESET=============')
-    # for step in range(0,100):
-    #     print('========STEP=============')
-    #     start = time.time()
-    #     o,r,d,i = agent.step(agent.action_space.sample())
-    #     print('========AFTER STEP=============')
-    #     if d:
-    #         agent.reset()
-    #     elasped = time.time() - start
-    #     print('Elasped {}'.format(elasped))
-    # print("main ending.")
-    exit(0)
-
 
     '''
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
     In gym_donkey, skip_frame parameter is 2 but modify to 1. 
     '''
-    #model.save('donkey7')
+    model.save('model.path')

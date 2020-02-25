@@ -47,7 +47,6 @@ class VAE(nn.Module):
 
     def reparameterize(self, mu, logvar):
         std = logvar.mul(0.5).exp_()
-        # return torch.normal(mu, std)
         esp = torch.randn(*mu.size()).to(self.device)
         z = mu + std * esp
         return z
@@ -75,9 +74,6 @@ class VAE(nn.Module):
     def loss_fn(self, x):
         z, mean, var = self.encode(x)
         KL = -0.5 * torch.mean(torch.sum(1 + torch.log(var) - mean**2 - var))
-        #kld = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
         y = self.decode(z)
         reconstruction = F.binary_cross_entropy(y.view(-1,38400), x.view(-1, 38400), size_average=False)
-        #reconstruction = torch.mean(torch.sum(x * torch.log(y) + (1 - x) * torch.log(1 - y)))
-        #lower_bound = [-KL, reconstruction]
-        return KL+reconstruction#-sum(lower_bound)
+        return KL+reconstruction
