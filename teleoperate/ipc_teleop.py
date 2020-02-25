@@ -3,7 +3,7 @@ from threading import Thread
 import posix_ipc
 import json
 
-class TeleopSocket:
+class Teleoperator:
 
 
     def __init__(self):
