@@ -3,7 +3,7 @@ from threading import Thread
 import posix_ipc
 import json
 
-class TeleopSocket:
+class Teleoperator:
 
 
     def __init__(self):
@@ -19,7 +19,7 @@ class TeleopSocket:
     def start_server(self):
 
         mq = posix_ipc.MessageQueue("/my_q01", posix_ipc.O_CREAT )
-    #
+
         while True:
             data = mq.receive()
             message = json.loads(data[0])
@@ -28,15 +28,7 @@ class TeleopSocket:
                 self.status = message['status']
                 print(self.status)
             time.sleep(0.01)
-        # context = zmq.Context()
-        # socket = context.socket(zmq.REP)
-        # socket.bind('tcp://*:5556')
-        # print('================START SERVER=============')
-        # while True:
-        #     message = socket.recv_string()
-        #     print(message)
-        # socket.close()
-        # context.destroy()
+
 
 
 

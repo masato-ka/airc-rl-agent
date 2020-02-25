@@ -72,11 +72,6 @@ class Agent(Env):
         tensor = transforms.ToTensor()(croped)
         tensor.to(self.device)
         z, _, _ = self.vae.encode(torch.stack((tensor,tensor),dim=0)[:-1].to(self.device))
-        # reconst_image = self.vae.decode(z)
-        # r = reconst_image[0].transpose(0, 2).transpose(0, 1)
-        # reconst_image = r.detach().cpu().numpy()
-        # reconst_image = PIL.Image.fromarray(np.uint8(reconst_image*255))
-        # self.teleop.set_reconst_image(reconst_image)
         return z.detach().cpu().numpy()[0]
 
     def _postprocess_observe(self,observe, action):
