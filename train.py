@@ -1,23 +1,18 @@
-import time
-
+import argparse
 import torch
 from stable_baselines import SAC
-from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
-import tensorflow as tf
 from agent.agent import Agent
 from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT, THROTTLE_REWARD_WEIGHT
 
 from jetbot_env import JetbotEnv
 
+from sac import CustomSACPolicy
 from teleoperate.sock_teleop import TeleopSocket
 from vae.vae import VAE
 
 VARIANTS_SIZE = 32
-image_channels = 3
+IMAGE_CHANNELS = 3
 
-class CustomSACPolicy(SACPolicy):
-    def __init__(self, *args, **kwargs):
-        super(CustomSACPolicy, self).__init__(*args, **kwargs,layers=[32, 16],act_fun=tf.nn.elu,feature_extraction="mlp")
 
 def calc_reward(action, e_i, done):
     if done:
@@ -26,14 +21,19 @@ def calc_reward(action, e_i, done):
     throttle_reward = THROTTLE_REWARD_WEIGHT * (action[1] / MAX_THROTTLE)
     return 1 + throttle_reward
 
+def load_vae(model_path, variants_size, image_channels, device):
+    vae = VAE(image_channels=image_channels, z_dim=variants_size)
+    vae.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
+    vae.to(torch.device(device)).eval()
+    return vae
+
+
 if __name__ == '__main__':
 
     model_path = 'vae.torch'
     torch_device = 'cuda'
-    vae = VAE(image_channels=image_channels, z_dim=VARIANTS_SIZE)
-    vae.load_state_dict(torch.load(model_path, map_location=torch.device(torch_device)))
-    vae.to(torch.device(torch_device))
-    vae.eval()
+
+    vae = load_vae()
 
     env = JetbotEnv()
     # teleop = Teleoperator()
