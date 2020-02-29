@@ -6,7 +6,7 @@ from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT
     IMAGE_CHANNELS, VERBOSE, BATCH_SIZE, BUFFER_SIZE, LEARNING_STARTS, GRADIENT_STEPS, TRAIN_FREQ, ENT_COEF, \
     LEARNING_RATE, LOG_INTERVAL
 
-from jetbot_env import JetbotEnv
+from robot import JetbotEnv
 
 from sac import CustomSACPolicy
 from teleoperate import Teleoperator
