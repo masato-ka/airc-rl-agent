@@ -45,7 +45,7 @@ parser.add_argument('-robot', '--robot-driver', help='choose robot driver',
 parser.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
 parser.add_argument('-s', '--save', help='save model file name.',
-                    defaults='model', type=str)
+                    default='model', type=str)
 
 
 if __name__ == '__main__':

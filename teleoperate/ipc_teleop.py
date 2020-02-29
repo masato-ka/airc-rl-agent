@@ -26,7 +26,10 @@ class Teleoperator:
 
             if type(message['status']) == type(True):
                 self.status = message['status']
-                print(self.status)
+                if self.status:
+                    print('STOP')
+                else:
+                    print('START')
             time.sleep(0.01)
 
 
