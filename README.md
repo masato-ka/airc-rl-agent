@@ -50,20 +50,35 @@ JetBot is learning running behavior on road in under 30 min. Software is running
 
 Dependency library install.
 
-* OpenAIGym 0.10.9
+#### OpenAIGym 0.10.9
 
 ```
 sudo pip3 install gym==0.10.9
 ```
 
-* stable-baselines v2.9.0
+#### stable-baselines v2.9.0
 
 ```
 $ cd ~/ && git clone https://github.com/hill-a/stable-baselines.git -b v2.9.0
 $ cd stable-baselines/ && sudo python3 setup.py install
 ```
 
-* clone this repository
+Must be change source code. line 433 in stable_baselines/sac/sac.py
+
+* Current
+
+```python
+if step % self.train_freq == 0:
+```
+
+* TOBE
+
+```python
+if step % self.train_freq == 0 and done
+```
+
+
+#### clone this repository
 
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
@@ -73,6 +88,31 @@ $ cd airc-rl-agent
 
 
 ## Usage
+
+### Create VAE Model
+
+1. Collect Environment data using ```data_collection.ipynb```. Image 1k to 10k
+2. Leaning VAE using ```VAE_CNN.ipynb``` on other host machine such as Google Colaboratory.
+3. Download vae.torch from host machine and deploy to root directory.
+
+### Check and Evaluation 
+
+Run ```notebooks/util/vae_viewer.ipynb``` and Check reconstruction image.
+Check that the image is reconstructed at several places on the course.
+
+### Start learning
+
+1. Run zmq_client.ipynb (needs game controller).
+2. Run train.py
+
+```shell
+$ python3 train.py
+```
+
+After few min, the AI car starts running. Please push STOP button immediately before the course out. 
+And after, push START button. Repeat this.
+
+
 
 ## Contribution
 
