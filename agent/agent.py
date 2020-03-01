@@ -103,8 +103,11 @@ class Agent(Env):
     def reset(self):
         print('====RESET')
         # Waiting RESET for teleoperation.
+        message = True
         while self.teleop.status:
-            print(self.teleop.status)
+            if message:
+                print('Press START')
+            message = False
             time.sleep(0.1)
 
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
