@@ -50,20 +50,33 @@ JetBot is learning running behavior on road in under 30 min. Software is running
 
 Dependency library install.
 
+#### posix_ipc
+
+```shell
+sudo pip3 install posix_ipc
+```
+
 #### OpenAIGym 0.10.9
 
 ```
+sudo apt install -y liblapack-dev scipy
 sudo pip3 install gym==0.10.9
 ```
 
 #### stable-baselines v2.9.0
 
 ```
+$ sudo pip3 install -U Cython
 $ cd ~/ && git clone https://github.com/hill-a/stable-baselines.git -b v2.9.0
+# Before install, check below two comment.
 $ cd stable-baselines/ && sudo python3 setup.py install
+
+Install takes time.
 ```
 
-Must be change source code. line 433 in stable_baselines/sac/sac.py
+1. Must be change setup.py. delete opencv-python from dependencies.
+
+2. Must be change source code. line 433 in stable_baselines/sac/sac.py
 
 * Current
 
@@ -76,6 +89,7 @@ if step % self.train_freq == 0:
 ```python
 if step % self.train_freq == 0 and done
 ```
+
 
 
 #### clone this repository
@@ -91,14 +105,18 @@ $ cd airc-rl-agent
 
 ### Create VAE Model
 
-1. Collect Environment data using ```data_collection.ipynb```. Image 1k to 10k
+1. Collect Environment data using ```jetbot_data_collection.ipynb``` . Image is 1k to 10k.
+If you use on JetRacer, Using ```jetracer_data_collection.ipynb``` .
 2. Leaning VAE using ```VAE_CNN.ipynb``` on other host machine such as Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
 
 ### Check and Evaluation 
 
-Run ```notebooks/util/vae_viewer.ipynb``` and Check reconstruction image.
+
+Run ```notebooks/util/jetbot_vae_viewer.ipynb``` and Check reconstruction image.
 Check that the image is reconstructed at several places on the course.
+
+If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
 ### Start learning
 
@@ -106,7 +124,8 @@ Check that the image is reconstructed at several places on the course.
 2. Run train.py
 
 ```shell
-$ python3 train.py
+$ python3 train.py -robot jetbot
+# If you use on JetRacer, "-robot jetracer". default is jetbot.
 ```
 
 After few min, the AI car starts running. Please push STOP button immediately before the course out. 
@@ -119,7 +138,7 @@ And after, push START button. Repeat this.
 * If you find bug or want to new functions, Please write issue.
 * If you fix your self, please fork and send pull request.
 
-## Licence
+## LICENSE
 
 This software license under [MIT](https://github.com/masato-ka/airc-rl-agent/blob/master/LICENCE) licence.
 
