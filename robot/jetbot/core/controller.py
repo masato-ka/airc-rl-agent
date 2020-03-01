@@ -1,4 +1,8 @@
-from jetbot import Robot
+try:
+    from jetbot import Robot
+except ImportError:
+    class Robot:pass
+
 class RobotController():
 
     MAX_MOTORLIMIT = 1.0

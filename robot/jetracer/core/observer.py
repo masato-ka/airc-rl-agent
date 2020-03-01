@@ -1,20 +1,21 @@
 try:
-    from jetbot import Camera
+    from jetcam.csi_camera import CSICamera
 except ImportError:
-    class Camera:pass
+    class CSICamera: pass
 
 class Observer:
 
     def __init__(self, camera_width, camera_height):
-        self.camera = Camera(width=camera_width, height=camera_height)
+        self.camera = CSICamera(width=camera_width, height=camera_height, capture_width=camera_width,
+                                capture_height=camera_height, capture_fps=60)
         self.image = None
 
     def start(self):
         self.camera.observe(self._callback, names='value')
-        self.camera.start()
+        self.camera.running = True
 
     def stop(self):
-        self.camera.stop()
+        self.camera.running = False
 
     def _callback(self, change):
         img = change['new']

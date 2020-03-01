@@ -1,5 +1,6 @@
 import numpy as np
 from gym import Env, spaces
+
 from .core.controller import RobotController
 from .core.observer import Observer
 
@@ -14,10 +15,10 @@ MAX_STEERING = -1.0
 MIN_THROTTLE = 0.0
 MAX_THROTTLE = 1.0
 
-class JetbotEnv(Env):
+class JetRacerEnv(Env):
 
     def __init__(self):
-        super(JetbotEnv, self).__init__()
+        super(JetRacerEnv, self).__init__()
         self.controller = RobotController()
         self.observer = Observer(IMAGE_WIDTH, IMAGE_HEIGHT)
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,

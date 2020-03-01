@@ -7,13 +7,13 @@ from config import MIN_THROTTLE, MAX_THROTTLE, REWARD_CRASH, CRASH_REWARD_WEIGHT
     LEARNING_RATE, LOG_INTERVAL
 
 from robot import JetbotEnv
-
+from robot import JetRacerEnv
 from sac import CustomSACPolicy
 from teleoperate import Teleoperator
 from vae.vae import VAE
 
 
-robot_drivers = {'jetbot':JetbotEnv}
+robot_drivers = {'jetbot':JetbotEnv, 'jetracer':JetRacerEnv}
 
 def calc_reward(action, e_i, done):
     if done:
