@@ -87,7 +87,7 @@ if step % self.train_freq == 0:
 * TOBE
 
 ```python
-if step % self.train_freq == 0 and done
+if step % self.train_freq == 0 and done:
 ```
 
 
