@@ -132,6 +132,15 @@ After few min, the AI car starts running. Please push STOP button immediately be
 And after, push START button. Repeat this.
 
 
+### Running trained model
+
+After training, run the demo.py
+
+In below command, run the demo 1000 steps with model file name is model.
+
+```shell
+$ python3 demo.py -robot jetbot -steps 1000 -model model
+```
 
 ## Contribution
 
