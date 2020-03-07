@@ -20,6 +20,8 @@ This is using Soft Actor Critic as DRL algorithm. The algorithm is State of The 
 In addition, using Variational Auto Encoder(VAE) as State representation learning. 
 VAE can compress environment information, can speed up learning.
 
+![demo](content/demo.gif)
+
 * This method devised by Arrafin
     * [Arrafine's Medium blog post](https://towardsdatascience.com/learning-to-drive-smoothly-in-minutes-450a7cdb35f4)
     * [Arrafine's implementsation for Simulator](https://github.com/araffin/learning-to-drive-in-5-minutes)
@@ -118,6 +120,11 @@ Check that the image is reconstructed at several places on the course.
 
 If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
+* Left is an actual image. Right is reconstruction image.
+
+![vae](content/vae/vae.gif)
+
+
 ### Start learning
 
 1. Run user_interface.ipynb (needs game controller).
@@ -131,10 +138,42 @@ $ python3 train.py -robot jetbot
 After few min, the AI car starts running. Please push STOP button immediately before the course out. 
 And after, push START button. Repeat this.
 
+![learning](content/learning.gif)
+
+
+* train.py options
+
+|Name           | description            |Default                |
+|:--------------|:-----------------------|:----------------------|
+|-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
+|-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
+|-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
+|-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
+|-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
+
+## Running DEMO
+
+You can running your car without learning. Run below command, The script load vae model and RL model 
+and start controll your car.
+
+```shell
+$ python3 demo.py -robot jetbot
+``` 
+
+* demo.py options
+
+|Name           | description            |Default                |
+|:--------------|:-----------------------|:----------------------|
+|-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
+|-model(--model-path|Specify the file to load the trained reinforcement learning model.|model|
+|-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
+|-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
+|-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
+
 
 ## Release note
 
-* 2020/03/07 Alpha release
+* 2020/03/08 Alpha release
     * First release.
 
 
