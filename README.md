@@ -120,7 +120,7 @@ If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
 ### Start learning
 
-1. Run zmq_client.ipynb (needs game controller).
+1. Run user_interface.ipynb (needs game controller).
 2. Run train.py
 
 ```shell
