@@ -1,5 +1,5 @@
-AI RC Car RL Agent
-===
+LearningRacer-rl
+======
 
 Overview
 
@@ -131,6 +131,11 @@ $ python3 train.py -robot jetbot
 After few min, the AI car starts running. Please push STOP button immediately before the course out. 
 And after, push START button. Repeat this.
 
+
+## Release note
+
+* 2020/03/07 Alpha release
+    * First release.
 
 
 ## Contribution
