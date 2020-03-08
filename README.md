@@ -1,17 +1,17 @@
-AI RC Car RL Agent
-===
+LearningRacer-rl
+======
 
 Overview
 
 This software is able to Self learning your AI RC Car 
 by Deep reinforcement learning in few min.
 
+![demo](content/demo.gif)
 
 ## Description
 
-AI RC Car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
-supervised-learning needs much labeled data that written human. The behaivior quality 
-is determined that data. Running behavior characteristic is determined that data.
+DIY self driving car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
+The method needs much labeled data that written human. Running behavior characteristic is determined that data.
 
 Deep reinforcement learning (DRL) is can earned running behavior automatically through interaction with environment.
 Do not need sample data that is human labelling.
@@ -19,6 +19,7 @@ Do not need sample data that is human labelling.
 This is using Soft Actor Critic as DRL algorithm. The algorithm is State of The Art of DRL in real environment.
 In addition, using Variational Auto Encoder(VAE) as State representation learning. 
 VAE can compress environment information, can speed up learning.
+
 
 * This method devised by Arrafin
     * [Arrafine's Medium blog post](https://towardsdatascience.com/learning-to-drive-smoothly-in-minutes-450a7cdb35f4)
@@ -118,9 +119,14 @@ Check that the image is reconstructed at several places on the course.
 
 If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
+* Left is an actual image. Right is reconstruction image.
+
+![vae](content/vae/vae.gif)
+
+
 ### Start learning
 
-1. Run zmq_client.ipynb (needs game controller).
+1. Run user_interface.ipynb (needs game controller).
 2. Run train.py
 
 ```shell
@@ -131,6 +137,43 @@ $ python3 train.py -robot jetbot
 After few min, the AI car starts running. Please push STOP button immediately before the course out. 
 And after, push START button. Repeat this.
 
+![learning](content/learning.gif)
+
+
+* train.py options
+
+|Name           | description            |Default                |
+|:--------------|:-----------------------|:----------------------|
+|-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
+|-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
+|-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
+|-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
+|-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
+
+## Running DEMO
+
+You can running your car without learning. Run below command, The script load vae model and RL model 
+and start controll your car.
+
+```shell
+$ python3 demo.py -robot jetbot
+``` 
+
+* demo.py options
+
+|Name           | description            |Default                |
+|:--------------|:-----------------------|:----------------------|
+|-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
+|-model(--model-path|Specify the file to load the trained reinforcement learning model.|model|
+|-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
+|-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
+|-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
+
+
+## Release note
+
+* 2020/03/08 Alpha release
+    * First release.
 
 ### Running trained model
 
