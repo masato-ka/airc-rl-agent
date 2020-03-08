@@ -6,12 +6,12 @@ Overview
 This software is able to Self learning your AI RC Car 
 by Deep reinforcement learning in few min.
 
+![demo](content/demo.gif)
 
 ## Description
 
-AI RC Car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
-supervised-learning needs much labeled data that written human. The behaivior quality 
-is determined that data. Running behavior characteristic is determined that data.
+DIY self driving car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
+The method needs much labeled data that written human. Running behavior characteristic is determined that data.
 
 Deep reinforcement learning (DRL) is can earned running behavior automatically through interaction with environment.
 Do not need sample data that is human labelling.
@@ -20,7 +20,6 @@ This is using Soft Actor Critic as DRL algorithm. The algorithm is State of The 
 In addition, using Variational Auto Encoder(VAE) as State representation learning. 
 VAE can compress environment information, can speed up learning.
 
-![demo](content/demo.gif)
 
 * This method devised by Arrafin
     * [Arrafine's Medium blog post](https://towardsdatascience.com/learning-to-drive-smoothly-in-minutes-450a7cdb35f4)
