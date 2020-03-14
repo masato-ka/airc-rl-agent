@@ -174,6 +174,9 @@ $ python3 demo.py -robot jetbot
 
 * 2020/03/08 Alpha release
     * First release.
+    
+* 2020/03/16 Alpha-0.0.1 release
+    * Fix import error at jetbot_data_collection.ipynb.
 
 ### Running trained model
 
