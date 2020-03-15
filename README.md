@@ -108,7 +108,7 @@ $ cd airc-rl-agent
 
 1. Collect Environment data using ```jetbot_data_collection.ipynb``` . Image is 1k to 10k.
 If you use on JetRacer, Using ```jetracer_data_collection.ipynb``` .
-2. Leaning VAE using ```VAE_CNN.ipynb``` on other host machine such as Google Colaboratory.
+2. Leaning VAE using ```VAE_CNN.ipynb``` on other host machine. Recommend Google Colaboratory as host machine.
 3. Download vae.torch from host machine and deploy to root directory.
 
 ### Check and Evaluation 
