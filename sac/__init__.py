@@ -1,1 +1,2 @@
-from .policy_net import CustomSACPolicy
+from .hyperparam import CustomSACPolicy
+from .hyperparam import reward
