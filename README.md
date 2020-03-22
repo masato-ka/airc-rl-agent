@@ -4,14 +4,14 @@ LearningRacer-rl
 Overview
 
 This software is able to Self learning your AI RC Car 
-by Deep reinforcement learning in few min.
+by Deep reinforcement learning in few minutes.
 
 ![demo](content/demo.gif)
 
 ## Description
 
 DIY self driving car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
-The method needs much labeled data that written human. Running behavior characteristic is determined that data.
+The method need much labeled data that written human. Running behavior characteristic is determined that data.
 
 Deep reinforcement learning (DRL) is can earned running behavior automatically through interaction with environment.
 Do not need sample data that is human labelling.
@@ -32,7 +32,7 @@ VAE can compress environment information, can speed up learning.
 ## Demo
 
 This video is 
-JetBot is learning running behavior on road in under 30 min. Software is running on Jetson Nano.  
+JetBot is learning running behavior on road in under 30 minutes. Software is running on Jetson Nano.  
 
 [![](https://img.youtube.com/vi/j8rSWvcO-s4/0.jpg)](https://www.youtube.com/watch?v=j8rSWvcO-s4)
 
@@ -42,7 +42,7 @@ JetBot is learning running behavior on road in under 30 min. Software is running
 ### Requirements
 
 * JetBot or JetRacer base image(Recommend latest images)
-* tensorflow-gpu
+* tensorflow-gpu=1.14.0
 * torch
 * torchvision
 * OpenCV
@@ -69,28 +69,13 @@ sudo pip3 install gym==0.10.9
 ```
 $ sudo pip3 install -U Cython
 $ cd ~/ && git clone https://github.com/hill-a/stable-baselines.git -b v2.9.0
-# Before install, check below two comment.
+# Before install, check below comment.
 $ cd stable-baselines/ && sudo python3 setup.py install
 
 Install takes time.
 ```
 
 1. Must be change setup.py. delete opencv-python from dependencies.
-
-2. Must be change source code. line 433 in stable_baselines/sac/sac.py
-
-* Current
-
-```python
-if step % self.train_freq == 0:
-```
-
-* TOBE
-
-```python
-if step % self.train_freq == 0 and done:
-```
-
 
 
 #### clone this repository
@@ -100,15 +85,13 @@ $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent
 ```
 
-
-
 ## Usage
 
 ### Create VAE Model
 
-1. Collect Environment data using ```jetbot_data_collection.ipynb``` . Image is 1k to 10k.
-If you use on JetRacer, Using ```jetracer_data_collection.ipynb``` .
-2. Leaning VAE using ```VAE_CNN.ipynb``` on other host machine such as Google Colaboratory.
+1. Collect Environment data as 1k to 10 k images using ```data_collection.ipynb``` or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```.
+If you use on JetRacer, use```notebook/utility/jetracer/data_collection.ipynb``` . 
+2. Learning VAE using ```VAE CNN.ipynb``` on Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
 
 ### Check and Evaluation 
@@ -120,22 +103,24 @@ Check that the image is reconstructed at several places on the course.
 If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
 * Left is an actual image. Right is reconstruction image.
+* Color bar is represented latent variable of VAE(z=32 dim).
 
 ![vae](content/vae/vae.gif)
 
 
 ### Start learning
 
-1. Run user_interface.ipynb (needs game controller).
+1. Run user_interface.ipynb (needs gamepad).
+If you not have gamepad, use ```user_interface_without_gamepad.ipynb```
 2. Run train.py
 
 ```shell
-$ python3 train.py -robot jetbot
+$ python3 racer.py train -robot jetbot
 # If you use on JetRacer, "-robot jetracer". default is jetbot.
 ```
 
-After few min, the AI car starts running. Please push STOP button immediately before the course out. 
-And after, push START button. Repeat this.
+After few minutes, the AI car starts running. Please push STOP button immediately before the course out. 
+Then, after `` `RESET``` is displayed at the prompt, press the START button. Repeat this.
 
 ![learning](content/learning.gif)
 
@@ -156,7 +141,7 @@ You can running your car without learning. Run below command, The script load va
 and start controll your car.
 
 ```shell
-$ python3 demo.py -robot jetbot
+$ python3 racer.py demo -robot jetbot
 ``` 
 
 * demo.py options
@@ -177,6 +162,13 @@ $ python3 demo.py -robot jetbot
     
 * 2020/03/16 Alpha-0.0.1 release
     * Fix import error at jetbot_data_collection.ipynb.
+
+* 2020/03/23 Beta release
+    * VAE Viewer can see latent space.
+    * Avoid stable_baseline source code change at install.
+    * train.py and demo.py merged to racer.py.
+    * Available without a game controller.
+    * Fix for can not copy dataset from google drive in CNN_VAE.ipynb
 
 ### Running trained model
 
