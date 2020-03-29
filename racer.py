@@ -1,11 +1,14 @@
 import argparse
 from commands.subcommand import command_train, command_demo
+from config import ConfigReader
 
 parser = argparse.ArgumentParser(description='Learning Racer command.')
 subparser = parser.add_subparsers()
 
 # train subcommand.
 parser_train = subparser.add_parser('train', help='see `train -h`')
+parser_train.add_argument('-config', '--config-path', help='Path to a config.yml path.',
+                          default='config.yml', type=str)
 parser_train.add_argument('-vae', '--vae-path', help='Path to a trained vae model path.',
                     default='vae.torch', type=str)
 parser_train.add_argument('-device', '--device', help='torch device {"cpu" | "cuda"}',
@@ -20,6 +23,8 @@ parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.
 parser_demo = subparser.add_parser('demo', help='see `demo -h`')
+parser_demo.add_argument('-config', '--config-path', help='Path to a config.yml path.',
+                         default='config.yml', type=str)
 parser_demo.add_argument('-vae', '--vae-path', help='Path to a trained vae model path.',
                     default='vae.torch', type=str)
 parser_demo.add_argument('-model', '--model-path', help='Path to a trained vae model path.',
@@ -33,9 +38,11 @@ parser_demo.add_argument('-steps', '--time-steps', help='total step.',
 parser_demo.set_defaults(handler=command_demo)
 
 if __name__ == '__main__':
-
+    config = ConfigReader()
     args = parser.parse_args()
+    config.load(args.config_path)
+
     if hasattr(args, 'handler'):
-        args.handler(args)
+        args.handler(args, config)
     else:
         parser.print_help()

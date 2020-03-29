@@ -1,7 +1,5 @@
 import torch
 from agent.agent import Agent
-from config import VARIANTS_SIZE, IMAGE_CHANNELS, VERBOSE, BATCH_SIZE, BUFFER_SIZE, LEARNING_STARTS, GRADIENT_STEPS, \
-    TRAIN_FREQ, ENT_COEF, LEARNING_RATE, LOG_INTERVAL
 from robot import JetbotEnv, JetRacerEnv
 from sac import CustomSAC, CustomSACPolicy, reward
 from teleoperate import Teleoperator
@@ -16,27 +14,28 @@ def _load_vae(model_path, variants_size, image_channels, device):
     return vae
 
 
-def _create_agent(robot_driver, vae, torch_device):
+def _create_agent(robot_driver, vae, torch_device, config):
     env = robot_driver()
     teleop = Teleoperator()
-    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward)
+    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config)
     return agent
 
 
-def _init_agent(args):
+def _init_agent(args, config):
     torch_device = args.device
-    vae = _load_vae(args.vae_path, VARIANTS_SIZE, IMAGE_CHANNELS, torch_device)
-    agent = _create_agent(robot_drivers[args.robot_driver], vae, torch_device)
+    vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
+    agent = _create_agent(robot_drivers[args.robot_driver], vae, torch_device, config)
     return agent
 
 
-def command_train(args):
-
-    agent = _init_agent(args)
-    model = CustomSAC(CustomSACPolicy, agent, verbose=VERBOSE, batch_size=BATCH_SIZE, buffer_size=BUFFER_SIZE,
-                learning_starts=LEARNING_STARTS, gradient_steps=GRADIENT_STEPS, train_freq=TRAIN_FREQ,
-                ent_coef=ENT_COEF, learning_rate=LEARNING_RATE)
-    model.learn(total_timesteps=args.time_steps, log_interval=LOG_INTERVAL)
+def command_train(args, config):
+    agent = _init_agent(args, config)
+    model = CustomSAC(CustomSACPolicy, agent, verbose=config.sac_verbose(), batch_size=config.sac_batch_size(),
+                      buffer_size=config.sac_buffer_size(),
+                      learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
+                      train_freq=config.sac_train_freq(),
+                      ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
+    model.learn(total_timesteps=args.time_steps, log_interval=config.sac_log_interval())
     '''
     WARNING.
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
@@ -45,7 +44,7 @@ def command_train(args):
     model.save(args.save)
 
 
-def command_demo(args):
+def command_demo(args, config):
     agent = _init_agent(args)
     model = CustomSAC.load(args.model_path)
     obs = agent.reset()
