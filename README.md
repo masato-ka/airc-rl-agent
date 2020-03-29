@@ -170,6 +170,9 @@ $ python3 racer.py demo -robot jetbot
     * Available without a game controller.
     * Fix for can not copy dataset from google drive in CNN_VAE.ipynb
 
+* 2020/03/23 Beta-0.0.1 release
+    * Fix VAE_CNN.ipynb (bug #18).
+
 ### Running trained model
 
 After training, run the demo.py
