@@ -125,6 +125,12 @@ Then, after `` `RESET``` is displayed at the prompt, press the START button. Rep
 ![learning](content/learning.gif)
 
 
+When you use without_gamepad, you can check status using Validation box.
+
+|Can run                          | Waiting learning                       |
+|:-------------------------------:|:--------------------------------------:|
+|![can_run](content/status_ok.png)|![waiting_learn](content/status_ng.png) |
+
 * train.py options
 
 |Name           | description            |Default                |
