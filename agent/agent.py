@@ -14,7 +14,7 @@ from config import N_COMMAND_HISTORY, MAX_STEERING, MIN_STEERING, MIN_THROTTLE, 
 
 class Agent(Env):
 
-    def __init__(self, _wrapped_env, vae, teleop,device,  reward_callback=None):
+    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None):
 
         self._wrapped_env = _wrapped_env
         self.vae = vae
@@ -97,12 +97,14 @@ class Agent(Env):
 
         if done:
             self._wrapped_env.step(np.array([0.,0.]))
+            self.teleop.send_status(False)
 
         return observe, reward, done, e_i
 
     def reset(self):
         print('====RESET')
         # Waiting RESET for teleoperation.
+        self.teleop.send_status(True)
         message = True
         while self.teleop.status:
             if message:
