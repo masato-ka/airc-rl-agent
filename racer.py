@@ -14,6 +14,8 @@ parser_train.add_argument('-robot', '--robot-driver', help='choose robot driver'
                     default='jetbot', type=str)
 parser_train.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
+parser_train.add_argument('-save_freq', '--save-freq-episode', help='total step.',
+                          default='10', type=int)
 parser_train.add_argument('-s', '--save', help='save model file name.',
                     default='model', type=str)
 parser_train.set_defaults(handler=command_train)

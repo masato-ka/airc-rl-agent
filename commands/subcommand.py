@@ -30,13 +30,29 @@ def _init_agent(args):
     return agent
 
 
+def _generate_save_callbask(args):
+    save_freq_episode = args.save_freq_episode
+    path = args.save
+
+    def _save_callback(locals, globals):
+        num_episodes = len(locals['episode_rewards'])
+        if locals['self'].num_timesteps > locals['self'].learning_starts and \
+                num_episodes % save_freq_episode == 0 and locals['done']:
+            locals['self'].save(path + '_' + str(num_episodes) + '.zip')
+
+        return True
+
+    return _save_callback
+
 def command_train(args):
 
     agent = _init_agent(args)
     model = CustomSAC(CustomSACPolicy, agent, verbose=VERBOSE, batch_size=BATCH_SIZE, buffer_size=BUFFER_SIZE,
                 learning_starts=LEARNING_STARTS, gradient_steps=GRADIENT_STEPS, train_freq=TRAIN_FREQ,
                 ent_coef=ENT_COEF, learning_rate=LEARNING_RATE)
-    model.learn(total_timesteps=args.time_steps, log_interval=LOG_INTERVAL)
+    save_callback = _generate_save_callbask(args)
+
+    model.learn(total_timesteps=args.time_steps, log_interval=LOG_INTERVAL, callback=save_callback)
     '''
     WARNING.
     Normal SAC in stable baselines but code is changed to calculate gradient only when done episode.
