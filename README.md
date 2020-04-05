@@ -43,46 +43,32 @@ JetBot is learning running behavior on road in under 30 minutes. Software is run
 
 * JetBot or JetRacer base image(Recommend latest images)
 * tensorflow-gpu=1.14.0
-* torch
-* torchvision
-* OpenCV
+* torch=1.3.0
+* torchvision=0.4.2
+* OpenCV=4.1.1
 
 ### Install
 
-Dependency library install.
+#### Dependency library install.
 
-#### posix_ipc
+```
+$sudo apt install -y liblapack-dev scipy
+```
+
+
+#### Install racer command.
 
 ```shell
-sudo pip3 install posix_ipc
-```
-
-#### OpenAIGym 0.10.9
-
-```
-sudo apt install -y liblapack-dev scipy
-sudo pip3 install gym==0.10.9
-```
-
-#### stable-baselines v2.9.0
-
-```
-$ sudo pip3 install -U Cython
-$ cd ~/ && git clone https://github.com/hill-a/stable-baselines.git -b v2.9.0
-# Before install, check below comment.
-$ cd stable-baselines/ && sudo python3 setup.py install
-
-Install takes time.
-```
-
-1. Must be change setup.py. delete opencv-python from dependencies.
-
-
-#### clone this repository
-
-```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent
+$ sudo pip3 install .
+```
+
+When complete install please check run command.
+
+```shell
+$ racer --version
+learning_racer version 1.0.0 .
 ```
 
 ## Usage
@@ -115,7 +101,7 @@ If you not have gamepad, use ```user_interface_without_gamepad.ipynb```
 2. Run train.py
 
 ```shell
-$ python3 racer.py train -robot jetbot
+$ racer train -robot jetbot
 # If you use on JetRacer, "-robot jetracer". default is jetbot.
 ```
 
@@ -125,7 +111,7 @@ Then, after `` `RESET``` is displayed at the prompt, press the START button. Rep
 ![learning](content/learning.gif)
 
 
-* train.py options
+* racer train options
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
@@ -141,10 +127,10 @@ You can running your car without learning. Run below command, The script load va
 and start controll your car.
 
 ```shell
-$ python3 racer.py demo -robot jetbot
+$ racer demo -robot jetbot
 ``` 
 
-* demo.py options
+* racer demo options
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
@@ -153,6 +139,13 @@ $ python3 racer.py demo -robot jetbot
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
+
+
+In below command, run the demo 1000 steps with model file name is model.
+
+```shell
+$ racer demo -robot jetbot -steps 1000 -model model
+```
 
 
 ## Release note
@@ -169,16 +162,6 @@ $ python3 racer.py demo -robot jetbot
     * train.py and demo.py merged to racer.py.
     * Available without a game controller.
     * Fix for can not copy dataset from google drive in CNN_VAE.ipynb
-
-### Running trained model
-
-After training, run the demo.py
-
-In below command, run the demo 1000 steps with model file name is model.
-
-```shell
-$ python3 demo.py -robot jetbot -steps 1000 -model model
-```
 
 ## Contribution
 
