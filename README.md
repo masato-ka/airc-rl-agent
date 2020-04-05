@@ -133,6 +133,8 @@ Then, after `` `RESET``` is displayed at the prompt, press the START button. Rep
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
+|-save_freq(--save_freq_episode) | 
+Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 
 ## Running DEMO
