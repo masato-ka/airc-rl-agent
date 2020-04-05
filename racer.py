@@ -1,7 +1,10 @@
 import argparse
 from commands.subcommand import command_train, command_demo
 
+__version__ = '1.0.0'
+
 parser = argparse.ArgumentParser(description='Learning Racer command.')
+parser.add_argument('--version', action='version', version='learning_racer version {} .'.format(__version__))
 subparser = parser.add_subparsers()
 
 # train subcommand.
@@ -32,10 +35,13 @@ parser_demo.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
 parser_demo.set_defaults(handler=command_demo)
 
-if __name__ == '__main__':
 
+def racer_func():
     args = parser.parse_args()
     if hasattr(args, 'handler'):
         args.handler(args)
     else:
         parser.print_help()
+
+if __name__ == '__main__':
+    racer_func()
