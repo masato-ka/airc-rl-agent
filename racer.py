@@ -31,7 +31,7 @@ parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeyS
 parser_train.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
                           default='9091', type=int)
 parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
-                          default='donkey-generated-trach-v0', type=str)
+                          default='donkey-generated-track-v0', type=str)
 parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.
@@ -48,14 +48,14 @@ parser_demo.add_argument('-robot', '--robot-driver', help='choose robot driver',
                     default='jetbot', type=str)
 parser_demo.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
-parser_train.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
-                          default='remote', type=str)
-parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
-                          default='127.0.0.1', type=str)
-parser_train.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
-                          default='9091', type=int)
-parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
-                          default='donkey-generated-trach-v0', type=str)
+parser_demo.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
+                         default='remote', type=str)
+parser_demo.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
+                         default='127.0.0.1', type=str)
+parser_demo.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
+                         default='9091', type=int)
+parser_demo.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
+                         default='donkey-generated-track-v0', type=str)
 parser_demo.set_defaults(handler=command_demo)
 
 

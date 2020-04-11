@@ -30,8 +30,8 @@ def _init_agent(args, config):
         agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config)
     elif args.robot_driver == 'sim':
         agent = _create_agent(robot_drivers[args.robot_driver]
-                              (args.sim_path, args.sim_host, args.sim_port, args.sim_track,
-                               vae, None, torch_device, config))
+                              (args.sim_path, args.sim_host, args.sim_port, args.sim_track),
+                              vae, None, torch_device, config)
     return agent
 
 
