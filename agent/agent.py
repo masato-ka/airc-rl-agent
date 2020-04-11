@@ -31,7 +31,8 @@ class Agent(Env):
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
                                        high=np.array([config.agent_max_steering(), 1]), dtype=np.float32)
-        self.teleop.start_process()
+        if self.teleop is not None:
+            self.teleop.start_process()
 
     def _calc_reward(self, action, done, i_e):
         pass
@@ -89,7 +90,8 @@ class Agent(Env):
         observe = self._postprocess_observe(observe,action)
 
         #Override Done event.
-        done = self.teleop.status
+        if self.teleop is not None:
+            done = self.teleop.status
 
         if self.reward_callback is not None:
             #Override reward.
@@ -97,20 +99,22 @@ class Agent(Env):
 
         if done:
             self._wrapped_env.step(np.array([0.,0.]))
-            self.teleop.send_status(False)
+            if self.teleop is not None:
+                self.teleop.send_status(False)
 
         return observe, reward, done, e_i
 
     def reset(self):
         print('====RESET')
         # Waiting RESET for teleoperation.
-        self.teleop.send_status(True)
-        message = True
-        while self.teleop.status:
-            if message:
-                print('Press START')
-            message = False
-            time.sleep(0.1)
+        if self.teleop is not None:
+            self.teleop.send_status(True)
+            message = True
+            while self.teleop.status:
+                if message:
+                    print('Press START')
+                message = False
+                time.sleep(0.1)
 
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         observe = self._wrapped_env.reset()

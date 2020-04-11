@@ -16,14 +16,22 @@ parser_train.add_argument('-vae', '--vae-path', help='Path to a trained vae mode
                     default='vae.torch', type=str)
 parser_train.add_argument('-device', '--device', help='torch device {"cpu" | "cuda"}',
                     default='cuda', type=str)
-parser_train.add_argument('-robot', '--robot-driver', help='choose robot driver',
-                    default='jetbot', type=str)
+parser_train.add_argument('-robot', '--robot-driver', help='choose robot driver from {"jetbot", "jetracer", "sim"}',
+                          default='jetbot', type=str)
 parser_train.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
 parser_train.add_argument('-save_freq', '--save-freq-episode', help='total step.',
                           default='10', type=int)
 parser_train.add_argument('-s', '--save', help='save model file name.',
                     default='model', type=str)
+parser_train.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
+                          default='remote', type=str)
+parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
+                          default='127.0.0.1', type=str)
+parser_train.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
+                          default='9091', type=int)
+parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
+                          default='donkey-generated-trach-v0', type=str)
 parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.
@@ -40,6 +48,14 @@ parser_demo.add_argument('-robot', '--robot-driver', help='choose robot driver',
                     default='jetbot', type=str)
 parser_demo.add_argument('-steps', '--time-steps', help='total step.',
                     default='5000', type=int)
+parser_train.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
+                          default='remote', type=str)
+parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
+                          default='127.0.0.1', type=str)
+parser_train.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
+                          default='9091', type=int)
+parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
+                          default='donkey-generated-trach-v0', type=str)
 parser_demo.set_defaults(handler=command_demo)
 
 

@@ -1,11 +1,12 @@
 import torch
 from agent.agent import Agent
 from robot import JetbotEnv, JetRacerEnv
+from robot.donkey_sim.donkey_sim_env import factory_creator
 from sac import CustomSAC, CustomSACPolicy, reward
 from teleoperate import Teleoperator
 from vae.vae import VAE
 
-robot_drivers = {'jetbot':JetbotEnv, 'jetracer':JetRacerEnv}
+robot_drivers = {'jetbot': JetbotEnv, 'jetracer': JetRacerEnv, 'sim': factory_creator}
 
 def _load_vae(model_path, variants_size, image_channels, device):
     vae = VAE(image_channels=image_channels, z_dim=variants_size)
@@ -14,9 +15,8 @@ def _load_vae(model_path, variants_size, image_channels, device):
     return vae
 
 
-def _create_agent(robot_driver, vae, torch_device, config):
+def _create_agent(robot_driver, vae, teleop, torch_device, config):
     env = robot_driver()
-    teleop = Teleoperator()
     agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config)
     return agent
 
@@ -24,7 +24,14 @@ def _create_agent(robot_driver, vae, torch_device, config):
 def _init_agent(args, config):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
-    agent = _create_agent(robot_drivers[args.robot_driver], vae, torch_device, config)
+    print(args.robot_driver)
+    if args.robot_driver in ['jetbot', 'jetracer']:
+        teleop = Teleoperator
+        agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config)
+    elif args.robot_driver == 'sim':
+        agent = _create_agent(robot_drivers[args.robot_driver]
+                              (args.sim_path, args.sim_host, args.sim_port, args.sim_track,
+                               vae, None, torch_device, config))
     return agent
 
 
