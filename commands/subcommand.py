@@ -57,7 +57,7 @@ def command_train(args, config):
 
 
 def command_demo(args, config):
-    agent = _init_agent(args)
+    agent = _init_agent(args, config)
     model = CustomSAC.load(args.model_path)
     obs = agent.reset()
     for step in range(args.time_steps):
