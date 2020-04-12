@@ -24,6 +24,8 @@ parser_train.add_argument('-save_freq', '--save-freq-episode', help='total step.
                           default='10', type=int)
 parser_train.add_argument('-s', '--save', help='save model file name.',
                     default='model', type=str)
+parser_train.add_argument('-l', '--load-model', help='Define pre-train model path.',
+                          default='', type=str)
 parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.

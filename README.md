@@ -128,6 +128,7 @@ When you use without_gamepad, you can check status using Validation box.
 |-save_freq(--save_freq_episode) | 
 Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
+|-l(--load-model)|Define pre-train model path.|-|
 
 ### Running DEMO
 

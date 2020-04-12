@@ -44,11 +44,14 @@ def _generate_save_callbask(args):
 
 def command_train(args, config):
     agent = _init_agent(args, config)
-    model = CustomSAC(CustomSACPolicy, agent, verbose=config.sac_verbose(), batch_size=config.sac_batch_size(),
-                      buffer_size=config.sac_buffer_size(),
-                      learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
-                      train_freq=config.sac_train_freq(),
-                      ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
+    if args.load_model == '':
+        model = CustomSAC(CustomSACPolicy, agent, verbose=config.sac_verbose(), batch_size=config.sac_batch_size(),
+                          buffer_size=config.sac_buffer_size(),
+                          learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
+                          train_freq=config.sac_train_freq(),
+                          ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
+    else:
+        model = CustomSAC.load(args.load_model)
     save_callback = _generate_save_callbask(args)
 
     model.learn(total_timesteps=args.time_steps, log_interval=config.sac_log_interval(), callback=save_callback)
