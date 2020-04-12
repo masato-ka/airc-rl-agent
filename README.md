@@ -201,6 +201,7 @@ Specify how many episodes to save the policy model. The policy starts saving aft
 |-port(--sim-port)|Define port number of DonkeySim host.|9091|
 |-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
+|-l(--load-model)|Define pre-train model path.|-|
 
 #### Start Demo
 
@@ -221,6 +222,8 @@ $ racer demo -robot sim -model <own trained model path> -vae <downloaded vae mod
 |-host(--sim-host)|Define host IP of DonkeySim host.|127.0.0,1|
 |-port(--sim-port)|Define port number of DonkeySim host.|9091|
 |-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
+|-user(--sim-user)  |Define user name for own car that showed DonkeySim |anonymous|
+|-car(--sim-car)    | Define car model type for own car that showed DonkeySim|Donkey|
 
 ## 5. Appendix
 

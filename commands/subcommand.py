@@ -15,23 +15,23 @@ def _load_vae(model_path, variants_size, image_channels, device):
     return vae
 
 
-def _create_agent(robot_driver, vae, teleop, torch_device, config):
+def _create_agent(robot_driver, vae, teleop, torch_device, config, train):
     env = robot_driver()
-    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config)
+    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config, train=train)
     return agent
 
 
-def _init_agent(args, config):
+def _init_agent(args, config, train=False):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
     if args.robot_driver in ['jetbot', 'jetracer']:
         teleop = Teleoperator
-        agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config)
+        agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config, train=train)
     elif args.robot_driver == 'sim':
         agent = _create_agent(robot_drivers[args.robot_driver]
                               (args.sim_path, args.sim_host, args.sim_port, args.sim_track),
-                              vae, None, torch_device, config)
+                              vae, None, torch_device, config, train=train)
     return agent
 
 
@@ -58,7 +58,12 @@ def command_train(args, config):
                           train_freq=config.sac_train_freq(),
                           ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
     else:
-        model = CustomSAC.load(args.load_model)
+        model = CustomSAC.load(args.load_model, env=agent, verbose=config.sac_verbose(),
+                               batch_size=config.sac_batch_size(),
+                               buffer_size=config.sac_buffer_size(),
+                               learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
+                               train_freq=config.sac_train_freq(),
+                               ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
     save_callback = _generate_save_callbask(args)
 
     model.learn(total_timesteps=args.time_steps, log_interval=config.sac_log_interval(), callback=save_callback)
@@ -67,7 +72,8 @@ def command_train(args, config):
 
 
 def command_demo(args, config):
-    agent = _init_agent(args, config)
+    agent = _init_agent(args, config, train=False)
+    agent.env.viewer.set_car_config(args.sim_car, (128, 128, 128), args.sim_user, 20)
     model = CustomSAC.load(args.model_path)
     obs = agent.reset()
     for step in range(args.time_steps):

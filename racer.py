@@ -24,6 +24,8 @@ parser_train.add_argument('-save_freq', '--save-freq-episode', help='total step.
                           default='10', type=int)
 parser_train.add_argument('-s', '--save', help='save model file name.',
                     default='model', type=str)
+parser_train.add_argument('-l', '--load-model', help='Define pre-train model path.',
+                          default='', type=str)
 parser_train.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
                           default='remote', type=str)
 parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
@@ -58,6 +60,10 @@ parser_demo.add_argument('-port', '--sim-port', help='Define port number of Donk
                          default='9091', type=int)
 parser_demo.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
                          default='donkey-generated-track-v0', type=str)
+parser_demo.add_argument('-user', '--sim-user', help='Define user name for own car that showed DonkeySim',
+                         default='anonymous', type=str)
+parser_demo.add_argument('-car', '--sim-car', help='Define car model type for own car that showed DonkeySim',
+                         default='Donkey', type=str)
 parser_demo.set_defaults(handler=command_demo)
 
 

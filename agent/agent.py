@@ -12,9 +12,10 @@ from torchvision.transforms import transforms
 
 class Agent(Env):
 
-    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None, config=None):
+    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None, config=None, train=True):
 
         self.config = config
+        self.train = train
         self._wrapped_env = _wrapped_env
         self.vae = vae
         self.z_dim = vae.z_dim
@@ -97,7 +98,7 @@ class Agent(Env):
             #Override reward.
             reward = self.reward_callback(action, e_i, done)
 
-        if done:
+        if done and self.train:
             self._wrapped_env.step(np.array([0.,0.]))
             if self.teleop is not None:
                 self.teleop.send_status(False)
