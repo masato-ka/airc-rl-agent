@@ -132,3 +132,24 @@ class Agent(Env):
 
     def seed(self, seed=None):
         return self._wrapped_env.seed(seed)
+
+    def jerk_penalty(self):
+        """
+        Add a continuity penalty to limit jerk.
+        :return: (float)
+        """
+        jerk_penalty = 0
+        if self.n_command_history > 1:
+            # Take only last command into account
+            for i in range(1):
+                steering = self.action_history[-2 * (i + 1)]
+                prev_steering = self.action_history[-2 * (i + 2)]
+                steering_diff = (prev_steering - steering) / (
+                            self.config.agent_max_steering - self.config.agent_min_steering)
+
+                if abs(steering_diff) > self.config.agent_max_steering_diff:
+                    error = abs(steering_diff) - self.config.agent_max_steering_diff
+                    jerk_penalty += 0.00 * (error ** 2)
+                else:
+                    jerk_penalty += 0
+        return jerk_penalty
