@@ -34,8 +34,6 @@ parser_train.add_argument('-port', '--sim-port', help='Define port number of Don
                           default='9091', type=int)
 parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
                           default='donkey-generated-track-v0', type=str)
-parser_train.add_argument('-l', '--load-model', help='Define pre-train model path.',
-                          default='', type=str)
 parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.
