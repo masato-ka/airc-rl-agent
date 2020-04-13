@@ -73,7 +73,7 @@ def command_train(args, config):
 
 def command_demo(args, config):
     agent = _init_agent(args, config, train=False)
-    agent.env.viewer.set_car_config(args.sim_car, (128, 128, 128), args.sim_user, 20)
+    agent._wrapped_env.viewer.set_car_config(args.sim_car, (128, 128, 128), args.sim_user, 20)
     model = CustomSAC.load(args.model_path)
     obs = agent.reset()
     for step in range(args.time_steps):
