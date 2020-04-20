@@ -1,10 +1,10 @@
 import torch
-from agent.agent import Agent
-from robot import JetbotEnv, JetRacerEnv
-from robot.donkey_sim.donkey_sim_env import factory_creator
-from sac import CustomSAC, CustomSACPolicy, reward
-from teleoperate import Teleoperator
-from vae.vae import VAE
+from learning_racer.agent.agent import Agent
+from learning_racer.robot import JetbotEnv, JetRacerEnv
+from learning_racer.sac import CustomSAC, CustomSACPolicy, reward
+from learning_racer.teleoperate import Teleoperator
+from learning_racer.vae.vae import VAE
+from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
 
 robot_drivers = {'jetbot': JetbotEnv, 'jetracer': JetRacerEnv, 'sim': factory_creator}
 
