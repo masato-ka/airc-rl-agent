@@ -110,18 +110,26 @@ Then, after `` `RESET``` is displayed at the prompt, press the START button. Rep
 
 ![learning](content/learning.gif)
 
+When you use without_gamepad, you can check status using Validation box.
+
+|Can run                          | Waiting learning                       |
+|:-------------------------------:|:--------------------------------------:|
+|![can_run](content/status_ok.png)|![waiting_learn](content/status_ng.png) |
 
 * racer train options
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
+|-config(--config-path)| Specify the file path of config.yml.    | config.yml             |
 |-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
+|-save_freq(--save_freq_episode) | 
+Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 
-## Running DEMO
+### Running DEMO
 
 You can running your car without learning. Run below command, The script load vae model and RL model 
 and start controll your car.
@@ -134,6 +142,7 @@ $ racer demo -robot jetbot
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
+|-config(--config-path)| Specify the file path of config.yml.    | config.yml             |
 |-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
 |-model(--model-path|Specify the file to load the trained reinforcement learning model.|model|
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
@@ -146,6 +155,37 @@ In below command, run the demo 1000 steps with model file name is model.
 ```shell
 $ racer demo -robot jetbot -steps 1000 -model model
 ```
+
+
+## Appendix 
+
+### Configuration 
+
+You can configuration hyperparameter using config.yml.
+
+|Section          |Parameter              |Description               |
+|:----------------|:----------------------|:-------------------------|
+|SAC_SETTING      |LOG_INTERVAL           | [Reference to stable baselines document.](https://stable-baselines.readthedocs.io/en/master/modules/sac.html)             |
+|^                |VERBOSE                | ^                        |
+|^                |LERNING_RATE           | ^                        |
+|^                |ENT_COEF               | ^                        |
+|^                |TRAIN_FREQ             | ^                        |
+|^                |BATCH_SIZE             | ^                        |
+|^                |GRADIENT_STEPS         | ^                        |
+|^                |LEARNING_STARTS        | ^                        |
+|^                |BUFFER_SIZE            | ^                        |
+|^                |VARIANTS_SIZE          | Define size of VAE latent|
+|^                |IMAGE_CHANNELS         | Number of image channel. |
+|REWARD_SETTING   |REWARD_CRASH           | Define reward when crash.|
+|^                |CRASH_REWARD_WEIGHT    | Weight of crash reward.   |
+|^                |THROTTLE_REWARD_WEIGHT | Weight of reward for speed. |
+|AGENT_SETTING    |N_COMMAND_HISTORY      | Number of length command history as observation.|
+|^                |MIN_STEERING           | min value of agent steering.|
+|^                |MAX_STEERING           | max value of agent steering.|
+|^                |MIN_THROTTLE           | min value of agent throttle.|
+|^                |MAX_THROTTLE           | max value of agent throttle.|
+|^                |MAX_STEERING_DIFF      | max value of steering diff each steps.| 
+
 
 
 ## Release note
@@ -162,6 +202,9 @@ $ racer demo -robot jetbot -steps 1000 -model model
     * train.py and demo.py merged to racer.py.
     * Available without a game controller.
     * Fix for can not copy dataset from google drive in CNN_VAE.ipynb
+
+* 2020/03/23 Beta-0.0.1 release
+    * Fix VAE_CNN.ipynb (bug #18).
 
 ## Contribution
 

@@ -3,27 +3,31 @@ from threading import Thread
 import posix_ipc
 import json
 
-class Teleoperator:
+from teleoperate.util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
 
+
+class Teleoperator:
 
     def __init__(self):
         self.status = False
         self.shutdown = False
+        self.rx_mq = posix_ipc.MessageQueue(AGENT_TO_JUPYTER)
+        self.tx_mq = posix_ipc.MessageQueue(JUPYTER_TO_AGENT, posix_ipc.O_CREAT)
 
     def start_process(self):
-        self.process = Thread(target=self.start_server)
+        self.process = Thread(target=self._polling_message)
         self.process.daemon = True
         self.process.start()
 
+    def send_status(self, status):
+        obj = {'status': status}
+        self.tx_mq.send(json.dumps(obj))
 
-    def start_server(self):
-
-        mq = posix_ipc.MessageQueue("/my_q01", posix_ipc.O_CREAT )
+    def _polling_message(self):
 
         while True:
-            data = mq.receive()
+            data = self.rx_mq.receive()
             message = json.loads(data[0])
-
             if type(message['status']) == type(True):
                 self.status = message['status']
                 if self.status:
