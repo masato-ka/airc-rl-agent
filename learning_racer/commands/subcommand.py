@@ -1,11 +1,11 @@
 import torch
-from agent.agent import Agent
+from learning_racer.agent.agent import Agent
 from config import VARIANTS_SIZE, IMAGE_CHANNELS, VERBOSE, BATCH_SIZE, BUFFER_SIZE, LEARNING_STARTS, GRADIENT_STEPS, \
     TRAIN_FREQ, ENT_COEF, LEARNING_RATE, LOG_INTERVAL
-from robot import JetbotEnv, JetRacerEnv
-from sac import CustomSAC, CustomSACPolicy, reward
-from teleoperate import Teleoperator
-from vae.vae import VAE
+from learning_racer.robot import JetbotEnv, JetRacerEnv
+from learning_racer.sac import CustomSAC, CustomSACPolicy, reward
+from learning_racer.teleoperate import Teleoperator
+from learning_racer.vae.vae import VAE
 
 robot_drivers = {'jetbot':JetbotEnv, 'jetracer':JetRacerEnv}
 
