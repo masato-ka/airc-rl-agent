@@ -2,7 +2,7 @@ import json
 import time
 from threading import Thread
 
-from teleoperate.util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
+from .util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
 
 try:
     import posix_ipc
