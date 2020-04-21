@@ -3,7 +3,7 @@ import posix_ipc
 import time
 from threading import Thread
 
-from teleoperate.util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
+from .util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
 
 
 class NotebookBackend:

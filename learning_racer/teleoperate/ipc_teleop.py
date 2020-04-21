@@ -3,7 +3,7 @@ from threading import Thread
 import posix_ipc
 import json
 
-from teleoperate.util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
+from .util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
 
 
 class Teleoperator:
