@@ -4,7 +4,7 @@ import json
 
 try:
     import posix_ipc
-except ModuleNotFoundError:
+except ImportError:
     class posix_ipc:
         pass
 
