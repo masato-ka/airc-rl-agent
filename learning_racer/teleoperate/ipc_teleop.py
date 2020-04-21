@@ -1,6 +1,5 @@
 import time
 from threading import Thread
-import posix_ipc
 import json
 
 try:
