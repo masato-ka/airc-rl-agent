@@ -1,7 +1,7 @@
 from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
 import tensorflow as tf
 
-from config import ConfigReader
+from learning_racer.config.config import ConfigReader
 
 config = ConfigReader()
 

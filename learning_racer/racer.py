@@ -1,6 +1,6 @@
 import argparse
 from learning_racer.commands.subcommand import command_demo, command_train
-from config import ConfigReader
+from learning_racer.config import ConfigReader
 
 
 __version__ = '1.0.0'
