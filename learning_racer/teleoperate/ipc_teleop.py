@@ -1,7 +1,12 @@
 import time
 from threading import Thread
-import posix_ipc
 import json
+
+try:
+    import posix_ipc
+except ModuleNotFoundError:
+    class posix_ipc:
+        pass
 
 from .util import JUPYTER_TO_AGENT, AGENT_TO_JUPYTER
 
