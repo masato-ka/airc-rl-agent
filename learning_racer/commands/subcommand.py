@@ -1,16 +1,27 @@
 import torch
+
+from learning_racer import exce
 from learning_racer.agent.agent import Agent
+from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
 from learning_racer.sac import CustomSAC, CustomSACPolicy, reward
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 robot_drivers = {'jetbot': JetbotEnv, 'jetracer': JetRacerEnv, 'sim': factory_creator}
 
 def _load_vae(model_path, variants_size, image_channels, device):
     vae = VAE(image_channels=image_channels, z_dim=variants_size)
-    vae.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
+    try:
+        vae.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
+    except FileNotFoundError:
+        logger.error("Specify VAE model path can not find. Please specify correct vae path using -vae option.")
+        raise OptionsValueError(
+            "Specify VAE model path can not find. Please specify correct vae path using -vae option.")
     vae.to(torch.device(device)).eval()
     return vae
 
@@ -21,12 +32,12 @@ def _create_agent(robot_driver, vae, teleop, torch_device, config, train):
     return agent
 
 
-def _init_agent(args, config, train=False):
+def _init_agent(args, config, train=True):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
     if args.robot_driver in ['jetbot', 'jetracer']:
-        teleop = Teleoperator
+        teleop = Teleoperator()
         agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config, train=train)
     elif args.robot_driver == 'sim':
         agent = _create_agent(robot_drivers[args.robot_driver]

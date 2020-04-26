@@ -16,7 +16,7 @@ class Teleoperator:
     def __init__(self):
         self.status = False
         self.shutdown = False
-        self.rx_mq = posix_ipc.MessageQueue(AGENT_TO_JUPYTER)
+        self.rx_mq = posix_ipc.MessageQueue(AGENT_TO_JUPYTER, posix_ipc.O_CREAT)
         self.tx_mq = posix_ipc.MessageQueue(JUPYTER_TO_AGENT, posix_ipc.O_CREAT)
 
     def start_process(self):

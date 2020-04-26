@@ -2,6 +2,9 @@ import argparse
 from learning_racer.commands.subcommand import command_demo, command_train
 from learning_racer.config import ConfigReader
 
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 __version__ = '1.0.0'
 
@@ -69,7 +72,11 @@ parser_demo.set_defaults(handler=command_demo)
 def racer_func():
     config = ConfigReader()
     args = parser.parse_args()
-    config.load(args.config_path)
+    try:
+        config.load(args.config_path)
+    except AttributeError:
+        logger.error("Choose subcommand from [train, demo]. See in README.md.")
+        exit(-1)
 
     if hasattr(args, 'handler'):
         args.handler(args, config)
