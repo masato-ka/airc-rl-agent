@@ -3,38 +3,35 @@ LearningRacer-rl
 
 Overview
 
-This software is able to Self learning your AI RC Car 
-by Deep reinforcement learning in few minutes.
+This software is able to self learning your AI Robocar by Deep reinforcement learning in few minutes.
 
 ![demo](content/demo.gif)
 
-And can learning DonkeySim. [See in](#simulator).
+You can use to Real Robocar and DonkeySim [See in](#simulator).
 
 ## 1. Description
 
-DIY self driving car like JetBot or JetRacer, DonkeyCar are  learning by supervised-learning.
-The method need much labeled data that written human. Running behavior characteristic is determined that data.
+Many DIY self driving car like JetBot or JetRacer, DonkeyCar are  using behavior cloning  by supervised-learning.
+The method need much labeled data that is collected by human demonstration.  Human driving techniques is very important in this case.
 
-Deep reinforcement learning (DRL) is can earned running behavior automatically through interaction with environment.
-Do not need sample data that is human labelling.
+On the other hands, In this software using deep reinforcement learning (DRL). 
+That is can earned running behavior automatically through interaction with environment. Do not need sample data that is human labelling.
 
-This is using Soft Actor Critic as DRL algorithm. The algorithm is State of The Art of DRL in real environment.
-In addition, using Variational Auto Encoder(VAE) as State representation learning. 
-VAE can compress environment information, can speed up learning.
+In addition this software agent can run on the Jetson Nano. Why can run on Jetson Nano and short learning time? because using integrate of SAC[soft actor critic] and VAE. SAC is a state of the art off-policy reinforcement learning method.
+In addition VAE train on cloud server beforehand as CNN layer of SAC.(This method called state representation learning) .
 
 
-* This method devised by Arrafin
+* This method devised by Antonin RAFFIN
     * [Arrafine's Medium blog post](https://towardsdatascience.com/learning-to-drive-smoothly-in-minutes-450a7cdb35f4)
     * [Arrafine's implementsation for Simulator](https://github.com/araffin/learning-to-drive-in-5-minutes)
 
 
-* About Soft actor critic
+* Detail of SAC here:
     * [Google AI blog Soft Actor-Critic: Deep Reinforcement Learning for Robotics](https://ai.googleblog.com/2019/01/soft-actor-critic-deep-reinforcement.html)
 
 ## 2. Demo
 
-This video is 
-JetBot is learning running behavior on road in under 30 minutes. Software is running on Jetson Nano.  
+This demo video showed that JetBot can earned policy of running road under 30 minutes. Only using Jetson Nano. 
 
 [![](https://img.youtube.com/vi/j8rSWvcO-s4/0.jpg)](https://www.youtube.com/watch?v=j8rSWvcO-s4)
 
@@ -43,41 +40,42 @@ JetBot is learning running behavior on road in under 30 minutes. Software is run
 
 ### 3.1 Requirements
 
-Please install below requirements by manually.
+* Jetbot or JetRacer
+ * JetPack 4.2 <=
+ * Python 3.6 <=
+ * pip 19.3.1 <=
 
-When using JetBot or JetRacer.
-
-* JetBot or JetRacer base image(Recommend latest images)
-* tensorflow-gpu=1.14.0
-* torch=1.3.0
-* torchvision=0.4.2
-* OpenCV=4.1.1
-
-When using DonkeySim.
-
-* tensorflow>=1.15.0 (recommend tensorflow-gpu)
-* torch=1.4.0
-* torchvision=0.5.0
-* opencv-python>=4.1.1
-* gym_donkey==latest
+* Windows, macOS or Ubuntu (DonkeySim only)
+ * x86-64 arch
+ * Python 3.6 <=
+ * pip 19.3.1 <=
+ * DonkeySIM
+ * Optional CUDA10.1(Windows and using GPU.)
 
 ### 3.2 Install
 
-#### Dependency library install.
-
-Only JetBot and JetRacer.
+* JetBot and JetRacer.
 
 ```
-$sudo apt install -y liblapack-dev scipy
-```
-
-#### Install racer command.
-
-```shell
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent
-$ sudo pip3 install .
+$ sh install_jetpack.sh
 ```
+
+* Other platform(DonkeySIM only).
+
+```
+$ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
+$ cd airc-rl-agent
+$ sudo pip3 install .\[choose platform\]
+```
+
+* You can choose platform from here
+    * windows
+    * windows-gpu
+    * osx
+    * ubuntu
+
 
 When complete install please check run command.
 
@@ -92,8 +90,15 @@ learning_racer version 1.0.0 .
 
 #### Create VAE Model
 
-1. Collect Environment data as 1k to 10 k images using ```data_collection.ipynb``` or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```.
-If you use on JetRacer, use```notebook/utility/jetracer/data_collection.ipynb``` . 
+If you have LEGO city raods, Skip this section.
+You can get pre-trained VAE model for LEGO city with JetBot. from [here](https://drive.google.com/open?id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S)
+
+```shell
+$wget "https://drive.google.com/uc?export=download&id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S" -O vae.torch
+```
+
+1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb``` or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```.
+   If you use on JetRacer, use```notebook/utility/jetracer/data_collection.ipynb``` . 
 2. Learning VAE using ```VAE CNN.ipynb``` on Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
 
@@ -133,7 +138,7 @@ When you use without_gamepad, you can check status using Validation box.
 |:-------------------------------:|:--------------------------------------:|
 |![can_run](content/status_ok.png)|![waiting_learn](content/status_ng.png) |
 
-* racer train options
+* racer train command options
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
@@ -149,14 +154,13 @@ Specify how many episodes to save the policy model. The policy starts saving aft
 
 #### Running DEMO
 
-You can running your car without learning. Run below command, The script load vae model and RL model 
-and start controll your car.
+When only inference, run below command, The script load VAE model and RL model and start running your car.
 
 ```shell
 $ racer demo -robot jetbot
 ``` 
 
-* racer demo options
+* racer demo command options
 
 |Name           | description            |Default                |
 |:--------------|:-----------------------|:----------------------|
@@ -173,12 +177,16 @@ In below command, run the demo 1000 steps with model file name is model.
 ```shell
 $ racer demo -robot jetbot -steps 1000 -model model
 ```
-### <a name="simulator"></a> 4.1 Simulator
 
+### <a name="simulator"></a> 4.1 Simulator
 
 #### Download VAE model.
 
 You can get pre-trained VAE model. from [here](https://drive.google.com/open?id=19r1yuwiRGGV-BjzjoCzwX8zmA8ZKFNcC)
+
+```shell
+$wget "https://drive.google.com/uc?export=download&id=19r1yuwiRGGV-BjzjoCzwX8zmA8ZKFNcC" -O vae.torch
+```
 
 #### Start learning
 
@@ -206,7 +214,7 @@ Specify how many episodes to save the policy model. The policy starts saving aft
 #### Start Demo
 
 ```shell
-$ racer demo -robot sim -model <own trained model path> -vae <downloaded vae model path> -steps 1000 -device cpu -host <DonkeySim IP>
+$ racer demo -robot sim -model <own trained model path> -vae <downloaded vae model path> -steps 1000 -device cpu -host <DonkeySim IP> -user <your own name>
 ```
 
 * racer demo options
@@ -229,7 +237,7 @@ $ racer demo -robot sim -model <own trained model path> -vae <downloaded vae mod
 
 ### 5.1 Configuration
 
-You can configuration hyperparameter using config.yml.
+You can configuration to some hyper parameter using config.yml.
 
 |Section          |Parameter              |Description               |
 |:----------------|:----------------------|:-------------------------|
@@ -274,9 +282,16 @@ You can configuration hyperparameter using config.yml.
 * 2020/03/23 Beta-0.0.1 release
     * Fix VAE_CNN.ipynb (bug #18).
 
+* 2020/04/26 v1.0.0 release
+    * Improvement install function.
+    * Can use DonkeySIM.
+    * YAML base configuration.
+    * Can use pre-trained model for SAC.
+    * Periodical saved model in each specific episode.
+
 ## 7. Contribution
 
-* If you find bug or want to new functions, Please write issue.
+* If you find bug or want to new functions, please write issue.
 * If you fix your self, please fork and send pull request.
 
 ## LICENSE
