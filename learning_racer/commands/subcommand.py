@@ -67,7 +67,8 @@ def command_train(args, config):
                           buffer_size=config.sac_buffer_size(),
                           learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
                           train_freq=config.sac_train_freq(),
-                          ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
+                          ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
+                          tensorboard_log="tblog")
     else:
         model = CustomSAC.load(args.load_model, env=agent, verbose=config.sac_verbose(),
                                batch_size=config.sac_batch_size(),

@@ -12,8 +12,8 @@ from torchvision.transforms import transforms
 
 class Agent(Env):
 
-    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None, config=None, train=True):
-
+    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None, override_done_callback=None,
+                 config=None, train=True):
         self.config = config
         self.train = train
         self._wrapped_env = _wrapped_env
@@ -22,6 +22,7 @@ class Agent(Env):
         self.teleop = teleop
         self.device = device
         self.reward_callback = reward_callback
+        self.override_done_callback = override_done_callback
         self.n_commands = 2
         self.n_command_history = config.agent_n_command_history()
         self.reward_callback = reward_callback
@@ -94,6 +95,9 @@ class Agent(Env):
         if self.teleop is not None:
             done = self.teleop.status
 
+        if self.override_done_callback is not None:
+            done = self.override_done_callback(action, e_i, done)
+        done = (e_i['cte'] > 2.5) or (e_i['cte'] < -6)
         if self.reward_callback is not None:
             #Override reward.
             reward = self.reward_callback(action, e_i, done)
