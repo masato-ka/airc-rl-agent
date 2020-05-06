@@ -28,7 +28,7 @@ class Agent(Env):
         self.reward_callback = reward_callback
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
-                                            shape=(self.z_dim + (self.n_commands * self.n_command_history), ),
+                                            shape=(self.z_dim + (self.n_commands * self.n_command_history) + 1,),
                                             dtype=np.float32)
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
@@ -77,11 +77,11 @@ class Agent(Env):
         z, _, _ = self.vae.encode(torch.stack((tensor,tensor),dim=0)[:-1].to(self.device))
         return z.detach().cpu().numpy()[0]
 
-    def _postprocess_observe(self,observe, action):
+    def _postprocess_observe(self, observe, action, e_i):
         self._record_action(action)
         observe = self._encode_image(observe)
         if self.n_command_history > 0:
-            observe = np.concatenate([observe, np.asarray(self.action_history)], 0)
+            observe = np.concatenate([observe, np.asarray(self.action_history), [np.float32(e_i['speed'])]], 0)
         return observe
 
 
@@ -89,21 +89,25 @@ class Agent(Env):
 
         action = self._preprocess_action(action)
         observe, reward, done, e_i = self._wrapped_env.step(action)
-        observe = self._postprocess_observe(observe,action)
+        observe = self._postprocess_observe(observe, action, e_i)
 
-        #Override Done event.
+        # Override Done event.
         if self.teleop is not None:
             done = self.teleop.status
 
         if self.override_done_callback is not None:
             done = self.override_done_callback(action, e_i, done)
-        done = (e_i['cte'] > 2.5) or (e_i['cte'] < -6)
+        done = (e_i['cte'] > 3.0) or (e_i['cte'] < -8.0)  # or e_i['hit'] is not 'none'
+
+        if e_i['hit'] != "none":
+            done = True
+
         if self.reward_callback is not None:
-            #Override reward.
+            # Override reward.
             reward = self.reward_callback(action, e_i, done)
 
         if done and self.train:
-            self._wrapped_env.step(np.array([0.,0.]))
+            self._wrapped_env.step(np.array([0., 0.]))
             if self.teleop is not None:
                 self.teleop.send_status(False)
 
@@ -125,7 +129,7 @@ class Agent(Env):
         observe = self._wrapped_env.reset()
         o = self._encode_image(observe)
         if self.n_command_history > 0:
-            o = np.concatenate([o, np.asarray(self.action_history)], 0)
+            o = np.concatenate([o, np.asarray(self.action_history), [np.float32(0.0)]], 0)
         return o
 
 
