@@ -105,7 +105,7 @@ class Agent(Env):
         if self.reward_callback is not None:
             # Override reward.
             reward = self.reward_callback(action, e_i, done)
-
+        reward += self.jerk_penalty()
         if done and self.train:
             self._wrapped_env.step(np.array([0., 0.]))
             if self.teleop is not None:
@@ -154,11 +154,11 @@ class Agent(Env):
                 steering = self.action_history[-2 * (i + 1)]
                 prev_steering = self.action_history[-2 * (i + 2)]
                 steering_diff = (prev_steering - steering) / (
-                            self.config.agent_max_steering - self.config.agent_min_steering)
+                        self.config.agent_max_steering() - self.config.agent_min_steering())
 
-                if abs(steering_diff) > self.config.agent_max_steering_diff:
-                    error = abs(steering_diff) - self.config.agent_max_steering_diff
-                    jerk_penalty += 0.00 * (error ** 2)
+                if abs(steering_diff) > self.config.agent_max_steering_diff():
+                    error = abs(steering_diff) - self.config.agent_max_steering_diff()
+                    jerk_penalty += 0.50 * (error ** 2)
                 else:
                     jerk_penalty += 0
         return jerk_penalty
