@@ -95,13 +95,15 @@ class Agent(Env):
         if self.teleop is not None:
             done = self.teleop.status
 
-        if self.override_done_callback is not None:
-            done = self.override_done_callback(action, e_i, done)
-        done = (e_i['cte'] > 3.0) or (e_i['cte'] < -8.0)  # or e_i['hit'] is not 'none'
-
-        if e_i['hit'] != "none":
-            done = True
-
+        # if self.override_done_callback is not None:
+        #     done = self.override_done_callback(action, e_i, done)
+        # done = (e_i['cte'] > 6.5) or (e_i['cte'] < -6.5)  # or e_i['hit'] is not 'none'
+        #
+        # if e_i['hit'] != "none":
+        #     done = True
+        if done:
+            print('====DONE EPISODE.')
+            print(e_i)
         if self.reward_callback is not None:
             # Override reward.
             reward = self.reward_callback(action, e_i, done)
