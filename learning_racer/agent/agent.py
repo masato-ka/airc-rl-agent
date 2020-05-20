@@ -28,7 +28,7 @@ class Agent(Env):
         self.reward_callback = reward_callback
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
-                                            shape=(self.z_dim + (self.n_commands * self.n_command_history) + 1,),
+                                            shape=(self.z_dim + (self.n_commands * self.n_command_history),),
                                             dtype=np.float32)
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
@@ -81,7 +81,7 @@ class Agent(Env):
         self._record_action(action)
         observe = self._encode_image(observe)
         if self.n_command_history > 0:
-            observe = np.concatenate([observe, np.asarray(self.action_history), [np.float32(e_i['speed'])]], 0)
+            observe = np.concatenate([observe, np.asarray(self.action_history)], 0)
         return observe
 
 
@@ -131,7 +131,7 @@ class Agent(Env):
         observe = self._wrapped_env.reset()
         o = self._encode_image(observe)
         if self.n_command_history > 0:
-            o = np.concatenate([o, np.asarray(self.action_history), [np.float32(0.0)]], 0)
+            o = np.concatenate([o, np.asarray(self.action_history)], 0)
         return o
 
 

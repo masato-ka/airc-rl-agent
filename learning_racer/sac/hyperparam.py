@@ -1,7 +1,5 @@
 import math
-
-from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
-import tensorflow as tf
+from stable_baselines3.sac.policies import MlpPolicy as SACPolicy
 
 from learning_racer.config.config import ConfigReader
 
@@ -12,7 +10,7 @@ class CustomSACPolicy(SACPolicy):
 
     def __init__(self, *args, **kwargs):
         super(CustomSACPolicy, self). \
-            __init__(*args, **kwargs, layers=[32, 16], act_fun=tf.nn.elu, feature_extraction="mlp")
+            __init__(*args, **kwargs, net_arch=[64, 64], log_std_init=-2)
 
 
 def reward(action, e_i, done):

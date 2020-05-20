@@ -4,7 +4,8 @@ from learning_racer import exce
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
-from learning_racer.sac import CustomSAC, CustomSACPolicy, reward
+from stable_baselines3.sac.sac import SAC as CustomSAC
+from learning_racer.sac import CustomSACPolicy, reward
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
@@ -13,6 +14,7 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 robot_drivers = {'jetbot': JetbotEnv, 'jetracer': JetRacerEnv, 'sim': factory_creator}
+
 
 def _load_vae(model_path, variants_size, image_channels, device):
     vae = VAE(image_channels=image_channels, z_dim=variants_size)
@@ -68,7 +70,8 @@ def command_train(args, config):
                           learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
                           train_freq=config.sac_train_freq(),
                           ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
-                          tensorboard_log="tblog")
+                          tensorboard_log="tblog", gamma=0.99, tau=0.02, use_sde_at_warmup=True, use_sde=True,
+                          sde_sample_freq=64)
     else:
         model = CustomSAC.load(args.load_model, env=agent, verbose=config.sac_verbose(),
                                batch_size=config.sac_batch_size(),
@@ -76,9 +79,9 @@ def command_train(args, config):
                                learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
                                train_freq=config.sac_train_freq(),
                                ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate())
-    save_callback = _generate_save_callbask(args)
+    # save_callback = _generate_save_callbask(args)
 
-    model.learn(total_timesteps=args.time_steps, log_interval=config.sac_log_interval(), callback=save_callback)
+    model.learn(total_timesteps=args.time_steps, log_interval=config.sac_log_interval())
 
     model.save(args.save)
 
