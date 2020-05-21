@@ -101,7 +101,7 @@ class Agent(Env):
         #
         # if e_i['hit'] != "none":
         #     done = True
-        done = np.fabs(e_i['etc']) > 5.5
+        done = np.fabs(e_i['cte']) > 5.5
         if done:
             print('====DONE EPISODE.')
             print(e_i)
