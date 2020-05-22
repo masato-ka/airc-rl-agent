@@ -101,7 +101,7 @@ class Agent(Env):
         #
         # if e_i['hit'] != "none":
         #     done = True
-        done = np.fabs(e_i['cte']) > 5.0
+        done = np.fabs(e_i['cte']) > 4.5
         if done:
             print('====DONE EPISODE.')
             print(e_i)
@@ -161,7 +161,7 @@ class Agent(Env):
 
                 if abs(steering_diff) > self.config.agent_max_steering_diff():
                     error = abs(steering_diff) - self.config.agent_max_steering_diff()
-                    jerk_penalty += 0.0 * (error ** 2)
+                    jerk_penalty += 0.5 * (error ** 2)
                 else:
                     jerk_penalty += 0
         return jerk_penalty
