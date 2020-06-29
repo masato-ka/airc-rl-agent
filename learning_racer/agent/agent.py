@@ -63,7 +63,6 @@ class Agent(Env):
     def _preprocess_action(self, action):
         action = self._scaled_action(action)
         action = self._smoothing_action(action)
-        self._record_action(action)
         return action
 
     def _encode_image(self, image):
