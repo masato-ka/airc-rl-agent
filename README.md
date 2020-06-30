@@ -289,6 +289,12 @@ You can configuration to some hyper parameter using config.yml.
     * Can use pre-trained model for SAC.
     * Periodical saved model in each specific episode.
 
+* 2002/06/30 v1.0.5 reelaes
+    * BugFix
+        * #20 Recording twice acition in a step
+        * #22 Error occurs when run demo subcommand in real car.
+    * Jetson nano install script improvement.
+
 ## 7. Contribution
 
 * If you find bug or want to new functions, please write issue.
