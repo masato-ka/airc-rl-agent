@@ -4,7 +4,7 @@ from stable_baselines3 import SAC
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
-from learning_racer.sac import reward, CustomSAC
+from learning_racer.sac import reward_sim, reward, CustomSAC
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
@@ -25,24 +25,17 @@ def _load_vae(model_path, variants_size, image_channels, device):
     vae.to(torch.device(device)).eval()
     return vae
 
-
-def _create_agent(robot_driver, vae, teleop, torch_device, config, train):
-    env = robot_driver()
-    agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config, train=train)
-    return agent
-
-
 def _init_agent(args, config, train=True):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
+    env = robot_drivers[args.robot_driver]()
     if args.robot_driver in ['jetbot', 'jetracer']:
         teleop = Teleoperator()
-        agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config, train=train)
+        agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config, train=train)
     elif args.robot_driver == 'sim':
-        agent = _create_agent(robot_drivers[args.robot_driver]
-                              (args.sim_path, args.sim_host, args.sim_port, args.sim_track),
-                              vae, None, torch_device, config, train=train)
+        agent = Agent(env, vae, teleop=None, device=torch_device, reward_callback=reward_sim, config=config,
+                      train=train)
     return agent
 
 def command_train(args, config):
