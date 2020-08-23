@@ -1,17 +1,6 @@
-# from stable_baselines.sac.policies import FeedForwardPolicy as SACPolicy
-# import tensorflow as tf
-
 from learning_racer.config.config import ConfigReader
 
 config = ConfigReader()
-
-
-# class CustomSACPolicy(SACPolicy):
-#
-#     def __init__(self, *args, **kwargs):
-#         super(CustomSACPolicy, self). \
-#             __init__(*args, **kwargs, layers=[32, 16], act_fun=tf.nn.elu, feature_extraction="mlp")
-#
 
 def reward(action, e_i, done):
     if done:

@@ -1,15 +1,10 @@
 import torch
 
-from learning_racer import exce
 from stable_baselines3 import SAC
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.callbacks import CheckpointCallback
-from stable_baselines3.sac import MlpPolicy
-
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
-from learning_racer.sac import reward
+from learning_racer.sac import reward, CustomSAC
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
@@ -50,52 +45,10 @@ def _init_agent(args, config, train=True):
                               vae, None, torch_device, config, train=train)
     return agent
 
-
-# def _generate_save_callbask(args):
-#     save_freq_episode = args.save_freq_episode
-#     path = args.save
-#
-#     def _save_callback(locals, globals):
-#         num_episodes = len(locals['episode_rewards'])
-#         if locals['self'].num_timesteps > locals['self'].learning_starts and \
-#                 num_episodes % save_freq_episode == 0 and locals['done']:
-#             locals['self'].save(path + '_' + str(num_episodes) + '.zip')
-#
-#         return True
-#
-#     return _save_callback
-
 def command_train(args, config):
     agent = _init_agent(args, config)
-    agent = Monitor(agent)
-    if args.load_model == '':
-        model = SAC("MlpPolicy", policy_kwargs=dict(activation_fn=torch.nn.ReLU, net_arch=[32, 32]),
-                    env=agent, verbose=config.sac_verbose(), batch_size=config.sac_batch_size(),
-                    buffer_size=config.sac_buffer_size(),
-                    learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
-                    train_freq=config.sac_train_freq(),
-                    ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
-                    tensorboard_log="tblog", gamma=0.99, tau=0.02, use_sde_at_warmup=True, use_sde=True,
-                    sde_sample_freq=64, n_episodes_rollout=1
-                    )
-    else:
-        model = SAC.load(args.load_model, env=agent, policy_kwargs=dict(activation_fn=torch.nn.ReLU, net_arch=[32, 32]),
-                         verbose=config.sac_verbose(),
-                         batch_size=config.sac_batch_size(),
-                         buffer_size=config.sac_buffer_size(),
-                         learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
-                         train_freq=config.sac_train_freq(),
-                         ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
-                         tensorboard_log="tblog", gamma=0.99, tau=0.02, use_sde_at_warmup=True, use_sde=True,
-                         sde_sample_freq=64, n_episodes_rollout=1)
-    save_callback = CheckpointCallback(save_freq=args.save_freq_steps,
-                                       save_path=args.save_model_path, name_prefix=args.save)
-
-    model.learn(total_timesteps=args.time_steps,
-                log_interval=config.sac_log_interval(),
-                tb_log_name="racer_learnig_log",
-                callback=save_callback)
-
+    model = CustomSAC(agent, args, config)
+    model.lean()
     model.save(args.save)
 
 
