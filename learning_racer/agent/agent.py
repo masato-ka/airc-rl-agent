@@ -95,7 +95,7 @@ class Agent(Env):
 
         if self.reward_callback is not None:
             #Override reward.
-            reward = self.reward_callback(action, e_i, done)
+            reward, done = self.reward_callback(action, e_i, done)
 
         if done and self.train:
             self._wrapped_env.step(np.array([0.,0.]))

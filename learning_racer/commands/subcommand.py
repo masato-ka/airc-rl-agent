@@ -29,11 +29,13 @@ def _init_agent(args, config, train=True):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
-    env = robot_drivers[args.robot_driver]()
     if args.robot_driver in ['jetbot', 'jetracer']:
         teleop = Teleoperator()
+        env = robot_drivers[args.robot_driver]()
         agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config, train=train)
     elif args.robot_driver == 'sim':
+        driver = robot_drivers[args.robot_driver](args.sim_path, args.sim_host, args.sim_port, args.sim_track)
+        env = driver()
         agent = Agent(env, vae, teleop=None, device=torch_device, reward_callback=reward_sim, config=config,
                       train=train)
     return agent
