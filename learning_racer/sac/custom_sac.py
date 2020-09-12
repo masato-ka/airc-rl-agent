@@ -36,7 +36,7 @@ class CustomSAC:
         self.agent = Monitor(agent)
         self.args = args
         self.config = config
-        self.policy = dict(activation_fn=torch.nn.ReLU, net_arch=[64, 64, 64], use_sde=True)
+        self.policy = dict(activation_fn=torch.nn.ReLU, net_arch=[64, 64], use_sde=True)
         self.model = _load_sac(self.agent, self.args, self.config, self.policy)
         self.checkpoint_cb = \
             CheckpointCallback(save_freq=args.save_freq_steps,
