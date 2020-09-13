@@ -27,6 +27,7 @@ class ConfigReader:
         self.sac = self.config.get('SAC_SETTING')
         self.reward = self.config.get('REWARD_SETTING')
         self.agent = self.config.get('AGENT_SETTING')
+        self.jetracer = self.config.get("JETRACER_SETTING")
 
     def sac_log_interval(self):
         return self.sac.get('LOG_INTERVAL')
@@ -87,6 +88,24 @@ class ConfigReader:
 
     def agent_max_steering_diff(self):
         return self.agent.get('MAX_STEERING_DIFF')
+
+    def jetracer_steering_channel(self):
+        return self.jetracer.get('STEERING_CHANNEL', 0)
+
+    def jetracer_throttle_channel(self):
+        return self.jetracer.get('THROTTLE_CHANNEL', 1)
+
+    def jetracer_steering_gain(self):
+        return self.jetracer.get('STEERING_GAIN', -0.65)
+
+    def jetracer_steering_offset(self):
+        return self.jetracer.get('STEERING_OFFSET', 0.0)
+
+    def jetracer_throttle_gain(self):
+        return self.jetracer.get('THROTTLE_GAIN', -0.8)
+
+    def jetracer_throttle_offset(self):
+        return self.jetracer.get('THROTTLE_OFFSET', 0.0)
 
 ConfigReader()
 

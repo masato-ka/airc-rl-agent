@@ -5,17 +5,20 @@ except ImportError:
 
 class RobotController:
 
-    STEERING_GAIN = -0.65
-    STEERING_OFFSET = 0.0
-    THROTTLE_GAIN = -0.8
-    THROTTLE_OFFSET = 0.0
+    # STEERING_GAIN = -0.65 #-0.85
+    # STEERING_OFFSET = 0.0
+    # THROTTLE_GAIN = -0.8 #0.6
+    # THROTTLE_OFFSET = 0.0
 
-    def __init__(self):
+    def __init__(self, config):
+
         self.car = NvidiaRacecar(
-            steering_gain=self.STEERING_GAIN,
-            steering_offset=self.STEERING_OFFSET,
-            throttle_gain=self.THROTTLE_GAIN,
-            throttle_offset=self.THROTTLE_OFFSET
+            steering_channel=config.jetracer_steering_channel(),
+            throttle_channel=config.jetracer_throttle_channel(),
+            steering_gain=config.jetracer_steering_gain(),
+            steering_offset=config.jetracer_steering_offset(),
+            throttle_gain=config.jetracer_throttle_gain(),
+            throttle_offset=config.jetracer_throttle_offset()
         )
 
     def action(self, steering, throttle):

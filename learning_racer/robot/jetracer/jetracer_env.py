@@ -3,13 +3,17 @@ from gym import Env, spaces
 
 from .core.controller import RobotController
 from .core.observer import Observer
+from learning_racer.config.config import ConfigReader
 
-#Camera settings
+# Expect after racer.py
+config = ConfigReader()
+
+# Camera settings
 IMAGE_WIDTH = 320
 IMAGE_HEIGHT = 240
 IMAGE_SIZE = (IMAGE_WIDTH, IMAGE_HEIGHT)
 
-#Actuator settings
+# Actuator settings
 MIN_STEERING = 1.0
 MAX_STEERING = -1.0
 MIN_THROTTLE = 0.0
@@ -19,7 +23,7 @@ class JetRacerEnv(Env):
 
     def __init__(self):
         super(JetRacerEnv, self).__init__()
-        self.controller = RobotController()
+        self.controller = RobotController(config)
         self.observer = Observer(IMAGE_WIDTH, IMAGE_HEIGHT)
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
