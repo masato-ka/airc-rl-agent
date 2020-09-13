@@ -36,6 +36,7 @@ def _init_agent(args, config, train=True):
     torch_device = args.device
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
+    agent = None
     if args.robot_driver in ['jetbot', 'jetracer']:
         teleop = Teleoperator()
         agent = _create_agent(robot_drivers[args.robot_driver], vae, teleop, torch_device, config, train=train)
@@ -43,6 +44,9 @@ def _init_agent(args, config, train=True):
         agent = _create_agent(robot_drivers[args.robot_driver]
                               (args.sim_path, args.sim_host, args.sim_port, args.sim_track),
                               vae, None, torch_device, config, train=train)
+    else:
+        logger.error("{} is not support robot name.".format(args.robot_driver))
+        exit(-1)
     return agent
 
 
