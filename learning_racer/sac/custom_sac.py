@@ -13,8 +13,9 @@ def _load_sac(agent, args, config, policy):
                     learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
                     train_freq=config.sac_train_freq(),
                     ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
-                    tensorboard_log="tblog", gamma=0.99, tau=0.02, use_sde_at_warmup=True, use_sde=True,
-                    sde_sample_freq=64, n_episodes_rollout=1
+                    tensorboard_log="tblog", gamma=config.sac_gamma(), tau=config.sac_tau(),
+                    use_sde_at_warmup=config.sac_use_sde_at_warmup(), use_sde=config.sac_use_sde(),
+                    sde_sample_freq=config.sac_sample_freq(), n_episodes_rollout=1
                     )
     else:
         model = SAC.load(args.load_model, env=agent,
@@ -25,8 +26,9 @@ def _load_sac(agent, args, config, policy):
                          learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
                          train_freq=config.sac_train_freq(),
                          ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
-                         tensorboard_log="tblog", gamma=0.99, tau=0.02, use_sde_at_warmup=True, use_sde=True,
-                         sde_sample_freq=64, n_episodes_rollout=1)
+                         tensorboard_log="tblog", gamma=config.sac_gamma(), tau=config.sac_tau(),
+                         use_sde_at_warmup=config.sac_use_sde_at_warmup(), use_sde=config.sac_use_sde(),
+                         sde_sample_freq=config.sac_sample_freq(), n_episodes_rollout=1)
     return model
 
 
