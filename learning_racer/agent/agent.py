@@ -1,5 +1,3 @@
-import time
-
 import torch
 
 import PIL
@@ -32,8 +30,6 @@ class Agent(Env):
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
                                        high=np.array([config.agent_max_steering(), 1]), dtype=np.float32)
-        if self.teleop is not None:
-            self.teleop.start_process()
 
     def _calc_reward(self, action, done, i_e):
         pass
@@ -107,15 +103,6 @@ class Agent(Env):
     def reset(self):
         print('====RESET')
         # Waiting RESET for teleoperation.
-        if self.teleop is not None:
-            self.teleop.send_status(True)
-            message = True
-            while self.teleop.status:
-                if message:
-                    print('Press START')
-                message = False
-                time.sleep(0.1)
-
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         observe = self._wrapped_env.reset()
         o = self._encode_image(observe)

@@ -1,6 +1,8 @@
 import torch
 
 from stable_baselines3 import SAC
+
+from learning_racer.agent import ControlCallback
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
@@ -30,10 +32,13 @@ def _init_agent(args, config, train=True):
     vae = _load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     print(args.robot_driver)
     agent = None
+    callback = None
     if args.robot_driver in ['jetbot', 'jetracer']:
         teleop = Teleoperator()
+        teleop.start_process()
         env = robot_drivers[args.robot_driver]()
         agent = Agent(env, vae, teleop=teleop, device=torch_device, reward_callback=reward, config=config, train=train)
+        callback = ControlCallback(teleop)
     elif args.robot_driver == 'sim':
         driver = robot_drivers[args.robot_driver](args.sim_path, args.sim_host, args.sim_port, args.sim_track)
         env = driver()
@@ -44,17 +49,17 @@ def _init_agent(args, config, train=True):
     else:
         logger.error("{} is not support robot name.".format(args.robot_driver))
         exit(-1)
-    return agent
+    return agent, callback
 
 def command_train(args, config):
-    agent = _init_agent(args, config)
+    agent, callback = _init_agent(args, config)
     model = CustomSAC(agent, args, config)
-    model.lean()
+    model.lean(callback=callback)
     model.save(args.save)
 
 
 def command_demo(args, config):
-    agent = _init_agent(args, config, train=False)
+    agent, callback = _init_agent(args, config, train=False)
     model = SAC.load(args.model_path)
     obs = agent.reset()
     for step in range(args.time_steps):

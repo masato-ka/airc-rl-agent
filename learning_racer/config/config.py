@@ -68,10 +68,10 @@ class ConfigReader:
     def sac_tau(self):
         return self.sac.get('TAU', 0.02)
 
-    def sac_user_sde_at_warmup(self):
+    def sac_use_sde_at_warmup(self):
         return self.sac.get('USER_SDE_AT_WARMUP', True)
 
-    def sac_user_sde(self):
+    def sac_use_sde(self):
         return self.sac.get('USER_SDE', True)
 
     def sac_sde_sample_freq(self):
