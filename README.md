@@ -289,11 +289,20 @@ You can configuration to some hyper parameter using config.yml.
     * Can use pre-trained model for SAC.
     * Periodical saved model in each specific episode.
 
-* 2002/06/30 v1.0.5 reelaes
+* 2020/06/30 v1.0.5 release
     * BugFix
-        * #20 Recording twice acition in a step
-        * #22 Error occurs when run demo subcommand in real car.
+        * \#20 Recording twice action in a step
+        * \#22 Error occurs when run demo subcommand in real car.
     * Jetson nano install script improvement.
+    
+* 2020/10/11 v1.5.0 release
+    * BugFix
+        * \#25 Change interface for latest gym_donkey
+    * Migration to stable_baseline3(All Pytorch implementation)
+    * Improvement notebook.
+        * user_interface.ipynb change UI.
+        * VAE_CNN.ipynb a little faster training.
+    * You can use TensorBoard for monitoring training. 
 
 ## 7. Contribution
 
