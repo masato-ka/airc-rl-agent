@@ -242,7 +242,7 @@ You can configuration to some hyper parameter using config.yml.
 
 |Section          |Parameter              |Description               |
 |:----------------|:----------------------|:-------------------------|
-|SAC_SETTING      |LOG_INTERVAL           | [Reference to stable baselines document.](https://stable-baselines.readthedocs.io/en/master/modules/sac.html)             |
+|SAC_SETTING      |LOG_INTERVAL           | [Reference to stable baselines document.](https://stable-baselines3.readthedocs.io/en/master/modules/sac.html)             |
 |^                |VERBOSE                | ^                        |
 |^                |LERNING_RATE           | ^                        |
 |^                |ENT_COEF               | ^                        |
