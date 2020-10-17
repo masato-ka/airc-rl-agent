@@ -204,10 +204,11 @@ $ racer train -robot sim -vae <downloaded vae model path> -device cpu -host <Don
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
 |-save_freq(--save_freq_episode) |
-Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
+Specify how many steps to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-host(--sim-host)|Define host IP of DonkeySim host.|127.0.0,1|
 |-port(--sim-port)|Define port number of DonkeySim host.|9091|
 |-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
+|-save_path(--save-model-path)| Specify the path for saved model file.|model_log|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 |-l(--load-model)|Define pre-train model path.|-|
 
@@ -250,6 +251,11 @@ You can configuration to some hyper parameter using config.yml.
 |^                |GRADIENT_STEPS         | ^                        |
 |^                |LEARNING_STARTS        | ^                        |
 |^                |BUFFER_SIZE            | ^                        |
+|^                |GAMMA                  | ^                        |
+|^                |TAU                    | ^                        |
+|^                |USER_SDE               | ^                        |
+|^                |USER_SDE_AT_WARMUP     | ^                        |
+|^                |SDE_SAMPLE_FREQ        | ^                        |
 |^                |VARIANTS_SIZE          | Define size of VAE latent|
 |^                |IMAGE_CHANNELS         | Number of image channel. |
 |REWARD_SETTING   |REWARD_CRASH           | Define reward when crash.|
@@ -261,6 +267,12 @@ You can configuration to some hyper parameter using config.yml.
 |^                |MIN_THROTTLE           | min value of agent throttle.|
 |^                |MAX_THROTTLE           | max value of agent throttle.|
 |^                |MAX_STEERING_DIFF      | max value of steering diff each steps.| 
+|JETRACER_SETTING |STEERING_CHANNEL       | Steering PWM pin number.|
+|^                |THROTTLE_CHANNEL       | Throttle PWM pin number.|
+|^                |STEERING_GAIN          | value of steering gain for NvidiaCar.|
+|^                |STEERING_OFFSET        | value of steering offset for NvidiaCar.|
+|^                |THROTTLE_GAIN          | value of throttle gain for NvidiaCar.|
+|^                |THROTTLE_OFFSET        | value of throttle offset for NvidiaCar.| 
 
 
 
