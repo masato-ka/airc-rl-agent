@@ -6,7 +6,7 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
-__version__ = '1.5.0'
+__version__ = '1.5.1'
 
 parser = argparse.ArgumentParser(description='Learning Racer command.')
 parser.add_argument('--version', action='version', version='learning_racer version {} .'.format(__version__))
