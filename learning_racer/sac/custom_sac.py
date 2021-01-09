@@ -56,7 +56,8 @@ class CustomSAC:
              tb_log_name: str = "run",
              eval_log_path: Optional[str] = None,
              reset_num_timesteps: bool = True, ):
-        callback = CallbackList([self.checkpoint_cb, callback])
+        # NOTE Avoid NoneType object callback for Simulation. This is problem of subcommand.py .
+        callback = CallbackList([c for c in [self.checkpoint_cb, callback] if c is not None])
         self.model.learn(total_timesteps=self.args.time_steps,
                          log_interval=self.config.sac_log_interval(),
                          tb_log_name="racer_learnig_log",
