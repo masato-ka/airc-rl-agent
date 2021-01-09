@@ -203,8 +203,7 @@ $ racer train -robot sim -vae <downloaded vae model path> -device cpu -host <Don
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
-|-save_freq(--save_freq_episode) |
-Specify how many steps to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
+|-save_freq(--save_freq_episode) |Specify how many steps to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-host(--sim-host)|Define host IP of DonkeySim host.|127.0.0,1|
 |-port(--sim-port)|Define port number of DonkeySim host.|9091|
 |-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
@@ -315,6 +314,11 @@ You can configuration to some hyper parameter using config.yml.
         * user_interface.ipynb change UI.
         * VAE_CNN.ipynb a little faster training.
     * You can use TensorBoard for monitoring training. 
+    
+* 2021/01/09 v1.5.1 release
+    * BugFix
+       * \#32 Dose not working on Simulator environment.
+       * README.md update.
 
 ## 7. Contribution
 
