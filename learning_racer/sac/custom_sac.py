@@ -14,11 +14,11 @@ def _load_sac(agent, args, config, policy):
                     env=agent, verbose=config.sac_verbose(), batch_size=config.sac_batch_size(),
                     buffer_size=config.sac_buffer_size(),
                     learning_starts=config.sac_learning_starts(), gradient_steps=config.sac_gradient_steps(),
-                    train_freq=config.sac_train_freq(),
+                    train_freq=(config.sac_train_freq(), 'episode'),
                     ent_coef=config.sac_ent_coef(), learning_rate=config.sac_learning_rate(),
                     tensorboard_log="tblog", gamma=config.sac_gamma(), tau=config.sac_tau(),
                     use_sde_at_warmup=config.sac_use_sde_at_warmup(), use_sde=config.sac_use_sde(),
-                    sde_sample_freq=config.sac_sde_sample_freq(), n_episodes_rollout=1
+                    sde_sample_freq=config.sac_sde_sample_freq()
                     )
     else:
         model = SAC.load(args.load_model, env=agent,
