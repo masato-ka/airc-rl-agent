@@ -6,7 +6,7 @@ from learning_racer.agent import ControlCallback
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
-from learning_racer.sac import reward_sim, reward, CustomSAC, episode_over_sim
+from learning_racer.sac import reward_sim, reward, CustomSAC
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
@@ -43,7 +43,6 @@ def _init_agent(args, config, train=True):
         driver = robot_drivers[args.robot_driver](args.sim_path, args.sim_host, args.sim_port, args.sim_track)
         env = driver()
         env.set_reward_fn(reward_sim)
-        env.set_episode_over_fn(episode_over_sim)
         agent = Agent(env, vae, teleop=None, device=torch_device, reward_callback=None, config=config,
                       train=train)
     else:
