@@ -53,8 +53,19 @@ This demo video showed that JetBot can earned policy of running road under 30 mi
  * Optional CUDA10.1(Windows and using GPU.)
 
 ### 3.2 Install
+*JetBot
+Set up JetBot using the following SDCard image.
+[https://jetbot.org/v0.4.3/software_setup/sd_card.html]
+```
+$ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
+$ cd airc-rl-agent/docker/jetbot && sh build.sh
+$ sh enable.sh /home/jetbot
+```
 
-* JetBot and JetRacer.
+JetBot images that version >= JetPack 4.4 are using docker container . Therefore, build application on docker container .
+
+
+* JetRacer.
 
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
@@ -151,6 +162,7 @@ When you use without_gamepad, you can check status using Validation box.
 Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 |-l(--load-model)|Define pre-train model path.|-|
+|-tblog(--tb-log)|Define logging directory name, If not set, Do not logging.|None|
 
 #### Running DEMO
 
@@ -170,7 +182,7 @@ $ racer demo -robot jetbot
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
-
+|-tblog(--tb-log)|Define logging directory name, If not set, Do not logging.|None|
 
 In below command, run the demo 1000 steps with model file name is model.
 
