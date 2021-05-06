@@ -60,6 +60,9 @@ Set up JetBot using the following SDCard image.
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent/docker/jetbot && sh build.sh
 $ sh enable.sh /home/jetbot
+# disable jetbot/jetbot container. Tag name modify for your system.
+$ sudo docker update --restart=no jetbot/jetbot:jupyter-0.x.x-x.x.x 
+$ sudo restart
 ```
 
 JetBot images that version >= JetPack 4.4 are using docker container . Therefore, build application on docker container .
@@ -92,14 +95,7 @@ When complete install please check run command.
 
 ```shell
 $ racer --version
-learning_racer version 1.0.0 .
-```
-
-## 4. Usage
-
-### 4.1 JetBot and JetRacer
-
-#### Create VAE Model
+learning_racer version 1.0.0 .#### Create VAE Model
 
 If you have LEGO city raods, Skip this section.
 You can get pre-trained VAE model for LEGO city with JetBot. from [here](https://drive.google.com/open?id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S)
