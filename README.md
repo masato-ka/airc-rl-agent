@@ -41,21 +41,26 @@ This demo video showed that JetBot can earned policy of running road under 30 mi
 ### 3.1 Requirements
 
 * Jetbot or JetRacer
- * JetPack 4.2 <=
- * Python 3.6 <=
- * pip 19.3.1 <=
+* JetPack>=4.2
+* Python=>3.6
+* pip>=19.3.1
+* pytorch>=1.8.0
 
 * Windows, macOS or Ubuntu (DonkeySim only)
- * x86-64 arch
- * Python 3.6 <=
- * pip 19.3.1 <=
- * DonkeySIM
- * Optional CUDA10.1(Windows and using GPU.)
+* x86-64 arch
+* Python>=3.6
+* pip>=19.3.1
+* DonkeySIM
+* Optional CUDA10.1(Windows and using GPU.)
+* pytorch>=1.8.0
 
 ### 3.2 Install
-*JetBot
+
+* JetBot
+
 Set up JetBot using the following SDCard image.
 [https://jetbot.org/v0.4.3/software_setup/sd_card.html]
+
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent/docker/jetbot && sh build.sh
@@ -65,16 +70,25 @@ $ sudo docker update --restart=no jetbot/jetbot:jupyter-0.x.x-x.x.x
 $ sudo restart
 ```
 
-JetBot images that version >= JetPack 4.4 are using docker container . Therefore, build application on docker container .
-
+JetBot images(JetPack>=4.4) are using docker container . Therefore, build application on docker container . allocate
+maximum memory to the container.
 
 * JetRacer.
+
+Firstly setup your jetracer software to JetPack 4.5.1 following
+this [link](https://github.com/NVIDIA-AI-IOT/jetracer/blob/master/docs/software_setup.md). Then run below command on
+your jetracer terminal.
 
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent
 $ sh install_jetpack.sh
 ```
+
+Some time pytorch can not recognize your GPU by CUDA Driver problem. In this situation, you need to install pytorch
+following this [link](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-now-available/72048). Detail
+see
+in [this](https://forums.developer.nvidia.com/t/my-jetson-nano-board-returns-false-to-torch-cuda-is-available-in-local-directory/182498)
 
 * Other platform(DonkeySIM only).
 
