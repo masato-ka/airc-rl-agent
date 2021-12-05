@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=jetbot-models:jp44
+ARG BASE_IMAGE=jetbot/jetbot:jupyter-0.4.2-32.4.4
 FROM ${BASE_IMAGE}
 
 ENV AI_RC_CAR_HOME=/opt/ai-rc-car

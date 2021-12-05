@@ -1,5 +1,15 @@
+#!/bin/bash
+
+# Enable the Learning Racer container.
+# Usage: ./enable.sh /home/jetbot
+
+
 WORKSPACE=$1
 JETBOT_CAMERA=${2:-opencv_gst_camera}
+
+L4T_VERSION_STRING=$(head -n 1 /etc/nv_tegra_release)
+L4T_RELEASE=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ' ' | grep -Po '(?<=R)[^;]+')
+L4T_REVISION=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ',' | grep -Po '(?<=REVISION: )[^;]+')
 
 # set default swap limit as unlimited
 
@@ -28,4 +38,4 @@ sudo docker run -it -d \
       --memory=$JETBOT_LEARNING_RACER_MEMORY \
       --memory-swap=$JETBOT_LEARNING_RACER_MEMORY_SWAP \
       --env JETBOT_DEFAULT_CAMERA=$JETBOT_CAMERA \
-      learning_racer:latest
+      learning_racer:"$L4T_VERSION"

@@ -61,17 +61,34 @@ This demo video showed that JetBot can earned policy of running road under 30 mi
 Set up JetBot using the following SDCard image.
 [https://jetbot.org/v0.4.3/software_setup/sd_card.html]
 
+Checking your JetBot Environment. Please write down JETBOT_VERSION and L4T_VERSION.
+
+```
+#JETBOT_VERSION
+$ sudo docker images jetbot/jetbot | grep jupyter | cut -f 8 -d ' ' | cut -f 2 -d '-'
+
+#L4T_VERSION
+$ sudo docker images jetbot/jetbot | grep jupyter | cut -f 8 -d ' ' | cut -f 3 -d '-'
+
+```
+
+And Setup LearningRacer for Docker container image.
+
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent/docker/jetbot && sh build.sh
 $ sh enable.sh /home/jetbot
-# disable jetbot/jetbot container. Tag name modify for your system.
-$ sudo docker update --restart=no jetbot/jetbot:jupyter-0.x.x-x.x.x 
+
+# disable jetbot/jetbot container. Tag name modify for your system by JETBOT_VERSION and L4T_VERSION.
+$ sudo docker update --restart=no jetbot/jetbot:jupyter-[JETBOT_VERSION]-[L4T_VERSION] 
 $ sudo restart
 ```
 
 JetBot images(JetPack>=4.4) are using docker container . Therefore, build application on docker container . allocate
 maximum memory to the container.
+
+You are able to use ```racer``` command inside docker container. Access to Jupyter Notebook on the
+container[http://<jetbot-ip>:8888/] and launch terminal(File->new->terminal ).
 
 * JetRacer.
 
