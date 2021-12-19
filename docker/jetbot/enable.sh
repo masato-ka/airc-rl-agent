@@ -10,7 +10,7 @@ JETBOT_CAMERA=${2:-opencv_gst_camera}
 L4T_VERSION_STRING=$(head -n 1 /etc/nv_tegra_release)
 L4T_RELEASE=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ' ' | grep -Po '(?<=R)[^;]+')
 L4T_REVISION=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ',' | grep -Po '(?<=REVISION: )[^;]+')
-
+expot L4T_VERSION="$L4T_RELEASE.$L4T_REVISION"
 # set default swap limit as unlimited
 
 if [ -z "$JETBOT_LEARNING_RACER_MEMORY_SWAP" ];
@@ -32,10 +32,10 @@ sudo docker run -it -d \
       --volume /dev/bus/usb:/dev/bus/usb \
       --volume /tmp/argus_socket:/tmp/argus_socket \
       -p 8888:8888 \
-      -v $WORKSPACE:/workspace \
+      -v "$WORKSPACE":/workspace \
       --workdir /workspace \
       --name=learning_racer \
-      --memory=$JETBOT_LEARNING_RACER_MEMORY \
-      --memory-swap=$JETBOT_LEARNING_RACER_MEMORY_SWAP \
-      --env JETBOT_DEFAULT_CAMERA=$JETBOT_CAMERA \
+      --memory="$JETBOT_LEARNING_RACER_MEMORY" \
+      --memory-swap="$JETBOT_LEARNING_RACER_MEMORY_SWAP" \
+      --env JETBOT_DEFAULT_CAMERA="$JETBOT_CAMERA" \
       learning_racer:"$L4T_VERSION"

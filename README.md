@@ -80,7 +80,7 @@ $ cd airc-rl-agent/docker/jetbot && sh build.sh
 $ sh enable.sh /home/jetbot
 
 # disable jetbot/jetbot container. Tag name modify for your system by JETBOT_VERSION and L4T_VERSION.
-$ sudo docker update --restart=no jetbot/jetbot:jupyter-[JETBOT_VERSION]-[L4T_VERSION] 
+$ sudo docker update --restart=no jetbot_jupyter
 $ sudo restart
 ```
 
@@ -89,6 +89,9 @@ maximum memory to the container.
 
 You are able to use ```racer``` command inside docker container. Access to Jupyter Notebook on the
 container[http://<jetbot-ip>:8888/] and launch terminal(File->new->terminal ).
+
+You need train original VAE model. Because torch version problem. Coud you cahange
+to ```torch.save(vae.state_dict(), 'vae.torch', _use_new_zipfile_serialization=True)``` in VAE_CNN.ipynb training cell.
 
 * JetRacer.
 
@@ -121,30 +124,32 @@ $ sudo pip3 install .\[choose platform\]
     * osx
     * ubuntu
 
-
 When complete install please check run command.
 
 ```shell
 $ racer --version
-learning_racer version 1.0.0 .#### Create VAE Model
-
-If you have LEGO city raods, Skip this section.
-You can get pre-trained VAE model for LEGO city with JetBot. from [here](https://drive.google.com/open?id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S)
-
-```shell
-$wget "https://drive.google.com/uc?export=download&id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S" -O vae.torch
+learning_racer version 1.5.0 .
 ```
 
-1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb``` or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```.
-   If you use on JetRacer, use```notebook/utility/jetracer/data_collection.ipynb``` . 
+#### Create VAE Model
+
+1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb```
+   or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```. If you use on JetRacer,
+   use```notebook/utility/jetracer/data_collection.ipynb``` .
 2. Learning VAE using ```VAE CNN.ipynb``` on Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
 
+When your robot is Jetbot, Coud you modify VAE_CNN.ipynb.
+
+* final line trainng cell, Please change to True.
+  '''
+  torch.save(vae.state_dict(), 'vae.torch', _use_new_zipfile_serialization=True)
+  '''
+
 #### Check and Evaluation
 
-
-Run ```notebooks/util/jetbot_vae_viewer.ipynb``` and Check reconstruction image.
-Check that the image is reconstructed at several places on the course.
+Run ```notebooks/util/jetbot_vae_viewer.ipynb``` and Check reconstruction image. Check that the image is reconstructed
+at several places on the course.
 
 If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
