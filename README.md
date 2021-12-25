@@ -97,16 +97,25 @@ You can get pre-trained VAE model for LEGO city with JetBot. from [here](https:/
 $wget "https://drive.google.com/uc?export=download&id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S" -O vae.torch
 ```
 
-1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb``` or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```.
-   If you use on JetRacer, use```notebook/utility/jetracer/data_collection.ipynb``` . 
+1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb```
+   or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```. If you use on JetRacer,
+   use```notebook/utility/jetracer/data_collection.ipynb``` .
 2. Learning VAE using ```VAE CNN.ipynb``` on Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
 
 #### Check and Evaluation
 
+**A.Offline check**
 
-Run ```notebooks/util/jetbot_vae_viewer.ipynb``` and Check reconstruction image.
-Check that the image is reconstructed at several places on the course.
+When you run VAE_CNN.ipynb, you can check projection of latent spaces on TensorBoard Projection Tab. This latent spaces
+are labeled by K-means. If similar images stick together, it indicate to that good latent spaces.
+
+![tensorboard-projection](content/vae/tensorboard-projection.png)
+
+**B.Online check**
+
+Run ```notebooks/util/jetbot_vae_viewer.ipynb``` and Check reconstruction image. Check that the image is reconstructed
+at several places on the course.
 
 If you use on JetRacer, Using ```jetracer_vae_viewer.ipynb``` .
 
