@@ -41,26 +41,74 @@ This demo video showed that JetBot can earned policy of running road under 30 mi
 ### 3.1 Requirements
 
 * Jetbot or JetRacer
- * JetPack 4.2 <=
- * Python 3.6 <=
- * pip 19.3.1 <=
+* JetPack>=4.2
+* Python=>3.6
+* pip>=19.3.1
+* pytorch>=1.8.0
 
 * Windows, macOS or Ubuntu (DonkeySim only)
- * x86-64 arch
- * Python 3.6 <=
- * pip 19.3.1 <=
- * DonkeySIM
- * Optional CUDA10.1(Windows and using GPU.)
+* x86-64 arch
+* Python>=3.6
+* pip>=19.3.1
+* DonkeySIM
+* Optional CUDA10.1(Windows and using GPU.)
+* pytorch>=1.8.0
 
 ### 3.2 Install
 
-* JetBot and JetRacer.
+* JetBot
+
+Set up JetBot using the following SDCard image.
+[https://jetbot.org/v0.4.3/software_setup/sd_card.html]
+
+Checking your JetBot Environment. Please write down JETBOT_VERSION and L4T_VERSION.
+
+```
+#JETBOT_VERSION
+$ sudo docker images jetbot/jetbot | grep jupyter | cut -f 8 -d ' ' | cut -f 2 -d '-'
+
+#L4T_VERSION
+$ sudo docker images jetbot/jetbot | grep jupyter | cut -f 8 -d ' ' | cut -f 3 -d '-'
+
+```
+
+And Setup LearningRacer for Docker container image.
+
+```
+$ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
+$ cd airc-rl-agent/docker/jetbot && sh build.sh
+$ sh enable.sh /home/jetbot
+
+# disable jetbot/jetbot container. Tag name modify for your system by JETBOT_VERSION and L4T_VERSION.
+$ sudo docker update --restart=no jetbot_jupyter
+$ sudo restart
+```
+
+JetBot images(JetPack>=4.4) are using docker container . Therefore, build application on docker container . allocate
+maximum memory to the container.
+
+You are able to use ```racer``` command inside docker container. Access to Jupyter Notebook on the
+container[http://<jetbot-ip>:8888/] and launch terminal(File->new->terminal ).
+
+You need train original VAE model. Because torch version problem. Coud you cahange
+to ```torch.save(vae.state_dict(), 'vae.torch', _use_new_zipfile_serialization=True)``` in VAE_CNN.ipynb training cell.
+
+* JetRacer.
+
+Firstly setup your jetracer software to JetPack 4.5.1 following
+this [link](https://github.com/NVIDIA-AI-IOT/jetracer/blob/master/docs/software_setup.md). Then run below command on
+your jetracer terminal.
 
 ```
 $ cd ~/ && git clone https://github.com/masato-ka/airc-rl-agent.git
 $ cd airc-rl-agent
 $ sh install_jetpack.sh
 ```
+
+Some time pytorch can not recognize your GPU by CUDA Driver problem. In this situation, you need to install pytorch
+following this [link](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-now-available/72048). Detail
+see
+in [this](https://forums.developer.nvidia.com/t/my-jetson-nano-board-returns-false-to-torch-cuda-is-available-in-local-directory/182498)
 
 * Other platform(DonkeySIM only).
 
@@ -81,7 +129,7 @@ When complete install please check run command.
 
 ```shell
 $ racer --version
-learning_racer version 1.0.0 .
+learning_racer version 1.5.0 .
 ```
 
 ## 4. Usage
@@ -90,18 +138,18 @@ learning_racer version 1.0.0 .
 
 #### Create VAE Model
 
-If you have LEGO city raods, Skip this section.
-You can get pre-trained VAE model for LEGO city with JetBot. from [here](https://drive.google.com/open?id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S)
-
-```shell
-$wget "https://drive.google.com/uc?export=download&id=1XyptXVAChDQDU6Z-UgUYFMCBaqy4is1S" -O vae.torch
-```
-
 1. Collect 1k to 10 k images from your car camera using ```data_collection.ipynb```
    or ```data_collection_without_gamepad.ipynb```in ```notebook/utility/jetbot```. If you use on JetRacer,
    use```notebook/utility/jetracer/data_collection.ipynb``` .
 2. Learning VAE using ```VAE CNN.ipynb``` on Google Colaboratory.
 3. Download vae.torch from host machine and deploy to root directory.
+
+When your robot is Jetbot, Coud you modify VAE_CNN.ipynb.
+
+* final line trainng cell, Please change to True.
+  '''
+  torch.save(vae.state_dict(), 'vae.torch', _use_new_zipfile_serialization=True)
+  '''
 
 #### Check and Evaluation
 
@@ -179,7 +227,7 @@ $ racer demo -robot jetbot
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
-
+|-tblog(--tb-log)|Define logging directory name, If not set, Do not logging.|None|
 
 In below command, run the demo 1000 steps with model file name is model.
 

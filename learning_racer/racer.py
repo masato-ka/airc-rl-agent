@@ -40,6 +40,8 @@ parser_train.add_argument('-port', '--sim-port', help='Define port number of Don
                           default='9091', type=int)
 parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
                           default='donkey-generated-track-v0', type=str)
+parser_train.add_argument('-log', '--tb-log', help='Define logging directory name, If not set, Do not logging.',
+                          default=None, type=str)
 parser_train.set_defaults(handler=command_train)
 
 # demo subcommand.
@@ -68,6 +70,8 @@ parser_demo.add_argument('-user', '--sim-user', help='Define user name for own c
                          default='anonymous', type=str)
 parser_demo.add_argument('-car', '--sim-car', help='Define car model type for own car that showed DonkeySim',
                          default='Donkey', type=str)
+parser_demo.add_argument('-log', '--tb-log', help='Define logging directory name, If not set, Do not logging.',
+                         default=None, type=str)
 parser_demo.set_defaults(handler=command_demo)
 
 
