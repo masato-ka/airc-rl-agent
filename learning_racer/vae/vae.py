@@ -52,8 +52,11 @@ class VAE(nn.Module):
         return z
 
     def bottleneck(self, h):
-        mu, logvar = self.fc1(h), F.softplus(self.fc2(h))
-        z = self.reparameterize(mu, logvar)
+        mu, logvar = self.fc1(h), self.fc2(h)
+        if self.training:
+            z = self.reparameterize(mu, logvar)
+        else:
+            z = mu
         return z, mu, logvar
 
     def encode(self, x):

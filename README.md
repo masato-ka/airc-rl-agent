@@ -328,6 +328,9 @@ You can configuration to some hyper parameter using config.yml.
     * BugFix
        * \#32 Dose not working on Simulator environment.
        * README.md update.
+       
+* 2021/04/11 v1.5.2 release
+    * Corresponding to stable_baseline3 1.0 
 
 ## 7. Contribution
 
