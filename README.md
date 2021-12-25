@@ -370,15 +370,26 @@ You can configuration to some hyper parameter using config.yml.
     * Improvement notebook.
         * user_interface.ipynb change UI.
         * VAE_CNN.ipynb a little faster training.
-    * You can use TensorBoard for monitoring training. 
-    
+    * You can use TensorBoard for monitoring training.
+
 * 2021/01/09 v1.5.1 release
     * BugFix
-       * \#32 Dose not working on Simulator environment.
-       * README.md update.
-       
+        * \#32 Dose not working on Simulator environment.
+        * README.md update.
+
 * 2021/04/11 v1.5.2 release
-    * Corresponding to stable_baseline3 1.0 
+    * Corresponding to stable_baseline3 1.0
+
+* 2021/12/26 v1.6.0 release
+    * BugFix
+        * \#33 Fix Can not stop over episode in simulator.
+        * \#40 Fix vae_viewer.ipynb is failed visualize reconstruction image color.
+        * \#42 Fix Can not load trained model.
+        * \#43 Fix VAE model problems.
+    * Improvement Notebook
+        * Visualize latent space with TensorBoar Projection(VAE_CNN.ipynb)
+    * Improvement Function.
+        * Docker installation for JetBot.
 
 ## 7. Contribution
 
