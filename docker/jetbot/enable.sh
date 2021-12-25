@@ -10,7 +10,7 @@ JETBOT_CAMERA=${2:-opencv_gst_camera}
 L4T_VERSION_STRING=$(head -n 1 /etc/nv_tegra_release)
 L4T_RELEASE=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ' ' | grep -Po '(?<=R)[^;]+')
 L4T_REVISION=$(echo "$L4T_VERSION_STRING" | cut -f 2 -d ',' | grep -Po '(?<=REVISION: )[^;]+')
-expot L4T_VERSION="$L4T_RELEASE.$L4T_REVISION"
+export L4T_VERSION="$L4T_RELEASE.$L4T_REVISION"
 # set default swap limit as unlimited
 
 if [ -z "$JETBOT_LEARNING_RACER_MEMORY_SWAP" ];
