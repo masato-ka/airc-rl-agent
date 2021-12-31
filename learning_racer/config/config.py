@@ -122,12 +122,14 @@ class ConfigReader:
     def jetracer_throttle_offset(self):
         return self.jetracer.get('THROTTLE_OFFSET', 0.0)
 
+    def vae_auto_stop_threshold(self):
+        return self.config.get('VAE_AUTO_STOP_THRESHOLD', 1350.0)
+
+
 ConfigReader()
 
 if __name__ == '__main__':
     config = ConfigReader()
     config.load('../config.yml')
 
-
     print(config.sac_batch_size())
-

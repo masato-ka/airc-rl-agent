@@ -10,13 +10,12 @@ class Flatten(nn.Module):
 class UnFlatten(nn.Module):
     def forward(self, input, size=256):
         return input.view(input.size(0), size, 3, 8)
-        torchvision.transforms.Crop
+
 
 class VAE(nn.Module):
     def __init__(self, image_channels=3, h_dim=6144, z_dim=32):
         super(VAE, self).__init__()
         self.z_dim = z_dim
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.encoder = nn.Sequential(
             nn.Conv2d(image_channels, 32, kernel_size=4, stride=2),
             nn.ReLU(),
@@ -41,9 +40,14 @@ class VAE(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(64, 32, kernel_size=5, stride=2),
             nn.ReLU(),
-            nn.ConvTranspose2d(32, image_channels, kernel_size=4, stride=2),
-            nn.Sigmoid(),
         )
+
+        self.out1 = nn.Sequential(nn.ConvTranspose2d(32, image_channels, kernel_size=4, stride=2),
+                                  nn.Sigmoid(),
+                                  )
+        self.out2 = nn.Sequential(nn.ConvTranspose2d(32, image_channels, kernel_size=4, stride=2),
+                                  nn.Sigmoid(),
+                                  )
 
     def reparameterize(self, mu, logvar):
         std = logvar.mul(0.5).exp_()
@@ -52,11 +56,11 @@ class VAE(nn.Module):
         return z
 
     def bottleneck(self, h):
-        mu, logvar = self.fc1(h), self.fc2(h)
+        mu, logvar = self.fc1(h), self.fc2(h)  # F.softplus(self.fc2(h))
         if self.training:
             z = self.reparameterize(mu, logvar)
-        else:
-            z = mu
+            return z, mu, logvar
+        z = mu
         return z, mu, logvar
 
     def encode(self, x):
@@ -66,17 +70,21 @@ class VAE(nn.Module):
 
     def decode(self, z):
         z = self.fc3(z)
-        z = self.decoder(z)
-        return z
+        x = self.decoder(z)
+        mu_y = self.out1(x)
+        sigma_y = self.out1(x)
+        return mu_y, sigma_y
 
     def forward(self, x):
         z, mu, logvar = self.encode(x)
-        z = self.decode(z)
-        return z, mu, logvar
+        mu_y, sigma_y = self.decode(z)
+        return mu_y, sigma_y, mu, logvar
 
-    def loss_fn(self, x):
-        z, mean, var = self.encode(x)
-        KL = -0.5 * torch.mean(torch.sum(1 + torch.log(var) - mean**2 - var))
-        y = self.decode(z)
-        reconstruction = F.binary_cross_entropy(y.view(-1,38400), x.view(-1, 38400), size_average=False)
-        return KL+reconstruction
+    def loss_fn(self, image, mu_y, sigma_y, mean, logvar):
+        m_vae_loss = (image - mu_y) ** 2 / sigma_y
+        m_vae_loss = 0.5 * torch.sum(m_vae_loss)
+        a_vae_loss = torch.log(2 * 3.14 * sigma_y)
+        a_vae_loss = 0.5 * torch.sum(a_vae_loss)
+        KL = -0.5 * torch.sum((1 + logvar - mean.pow(2) - logvar.exp()), dim=0)
+        KL = torch.mean(KL)
+        return KL + m_vae_loss + a_vae_loss

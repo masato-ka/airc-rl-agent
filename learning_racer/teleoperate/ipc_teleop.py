@@ -31,7 +31,7 @@ class Teleoperator:
     def _polling_message(self):
 
         while True:
-            data = self.rx_mq.receive()
+            data = self.rx_mq.receive()  # blocking.
             message = json.loads(data[0])
             if type(message['status']) == type(True):
                 self.status = message['status']
