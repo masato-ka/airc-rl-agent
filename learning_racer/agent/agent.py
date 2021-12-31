@@ -136,9 +136,11 @@ class Agent(Env):
         observe = self._postprocess_observe(z, action)
         reconst_img, sigma_y = self._decode_image(torch.unsqueeze(z, dim=0))
 
-        if self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0)):
-            print("Auto stop")
-        # done = self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0))
+        # Enable auto stop when config,yml is set
+        if self.config.vae_auto_stop():
+            if self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0)):
+                print("Auto stop")
+            done = self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0))
 
         # Override Done event.
         if self.teleop is not None:

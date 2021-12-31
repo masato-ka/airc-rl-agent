@@ -28,6 +28,7 @@ class ConfigReader:
         self.reward = self.config.get('REWARD_SETTING')
         self.agent = self.config.get('AGENT_SETTING')
         self.jetracer = self.config.get("JETRACER_SETTING")
+        self.auto_stop = self.config.get("VAE_AUTO_STOP")
 
     def sac_log_interval(self):
         return self.sac.get('LOG_INTERVAL')
@@ -123,8 +124,10 @@ class ConfigReader:
         return self.jetracer.get('THROTTLE_OFFSET', 0.0)
 
     def vae_auto_stop_threshold(self):
-        return self.config.get('VAE_AUTO_STOP_THRESHOLD', 1350.0)
+        return self.auto_stop.get('VAE_AUTO_STOP_THRESHOLD', 1350.0)
 
+    def vae_auto_stop(self):
+        return self.auto_stop.get('VAE_AUTO_STOP', False)
 
 ConfigReader()
 
