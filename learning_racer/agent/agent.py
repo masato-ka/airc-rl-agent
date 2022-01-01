@@ -113,18 +113,18 @@ class Agent(Env):
             z = np.concatenate([z, np.asarray(self.action_history)], 0)
         return z
 
-    def _is_auto_stop(self, reconst_img, sigma_y, observe_img):
+    def _is_auto_stop(self, reconst, sigma, observe_img):
         """
         Calculate the difference between the reconstructed image and the original image.
         :param reconst_img: Tensor of shape (160, 120, 3)
         :param observe_img: Tensor of shape (160, 120, 3)
         :return:
         """
-        m_vae_loss = (observe_img - reconst_img) ** 2 / sigma_y
+        m_vae_loss = (observe_img - reconst) ** 2 / sigma
         m_vae_loss = 0.5 * torch.sum(m_vae_loss)
         # bce_loss = torch.mean(torch.sum(observe_img*torch.log(reconst_img)+(1-observe_img)*torch.log(1-reconst_img), dim=1))
         # bce_loss = F.binary_cross_entropy(reconst_img.view(-1,38400), observe_img.view(-1,38400), reduction='sum')
-        print(m_vae_loss)
+        print(m_vae_loss.item())
         return m_vae_loss.item() > self.config.vae_auto_stop_threshold()
 
     def step(self, action):
@@ -134,16 +134,16 @@ class Agent(Env):
         img_t = self._preprocess_observation(observe).to(self.device)
         z = self._encode_image(img_t)
         observe = self._postprocess_observe(z, action)
-        reconst_img, sigma_y = self._decode_image(torch.unsqueeze(z, dim=0))
+        reconst, sigma = self._decode_image(torch.unsqueeze(z, dim=0))
 
         # Enable auto stop when config,yml is set
         if self.config.vae_auto_stop():
-            if self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0)):
+            if self._is_auto_stop(reconst, sigma, torch.unsqueeze(img_t, dim=0)):
                 print("Auto stop")
-            done = self._is_auto_stop(reconst_img, sigma_y, torch.unsqueeze(img_t, dim=0))
+                done = True
 
         # Override Done event.
-        if self.teleop is not None:
+        if (self.teleop is not None) and not self.config.vae_auto_stop():
             # Teleop.status == True is a stop signal.
             done = self.teleop.status
 
