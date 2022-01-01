@@ -1,6 +1,4 @@
 import torch
-import torchvision
-from torch.functional import F
 import PIL
 
 import numpy as np
@@ -116,11 +114,11 @@ class Agent(Env):
     def _is_auto_stop(self, reconst, sigma, observe_img):
         """
         Calculate the difference between the reconstructed image and the original image.
-        :param reconst_img: Tensor of shape (160, 120, 3)
+        :param reconst: Tensor of shape (160, 120, 3)
         :param observe_img: Tensor of shape (160, 120, 3)
         :return:
         """
-        m_vae_loss = (observe_img - reconst) ** 2 / sigma
+        m_vae_loss = (observe_img - reconst) ** 2 / sigma ** 2
         m_vae_loss = 0.5 * torch.sum(m_vae_loss)
         # bce_loss = torch.mean(torch.sum(observe_img*torch.log(reconst_img)+(1-observe_img)*torch.log(1-reconst_img), dim=1))
         # bce_loss = F.binary_cross_entropy(reconst_img.view(-1,38400), observe_img.view(-1,38400), reduction='sum')
@@ -136,11 +134,13 @@ class Agent(Env):
         observe = self._postprocess_observe(z, action)
         reconst, sigma = self._decode_image(torch.unsqueeze(z, dim=0))
 
-        # Enable auto stop when config,yml is set
+        # Enable auto stop when config.yml is set
         if self.config.vae_auto_stop():
             if self._is_auto_stop(reconst, sigma, torch.unsqueeze(img_t, dim=0)):
                 print("Auto stop")
                 done = True
+                if self.teleop is not None:
+                    self.teleop.status = True
 
         # Override Done event.
         if (self.teleop is not None) and not self.config.vae_auto_stop():
@@ -171,7 +171,6 @@ class Agent(Env):
         if self.n_command_history > 0:
             o = np.concatenate([o, np.asarray(self.action_history)], 0)
         return o
-
 
     def render(self):
         self._wrapped_env.render()
