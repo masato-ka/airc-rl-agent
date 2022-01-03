@@ -1,13 +1,12 @@
 import torch
 
 from stable_baselines3 import SAC
-from functions.simulator import SimulatorCallbacks
-from functions.teleoperation import TeleoperationCallbacks
-from learning_racer.agent import ControlCallback
+from learning_racer.functions.simulator import SimulatorCallbacks
+from learning_racer.functions.teleoperation import TeleoperationCallbacks
 from learning_racer.agent.agent import Agent
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.robot import JetbotEnv, JetRacerEnv
-from learning_racer.sac import reward_sim, reward, CustomSAC
+from learning_racer.sac import CustomSAC
 from learning_racer.teleoperate import Teleoperator
 from learning_racer.vae.vae import VAE
 from learning_racer.robot.donkey_sim.donkey_sim_env import factory_creator
@@ -36,11 +35,11 @@ def _init_agent(args, config, train=True):
     print(args.robot_driver)
     agent = None
     if args.robot_driver in ['jetbot', 'jetracer']:
-        teleop = Teleoperator()
-        teleop.start_process()
-        callbacks = TeleoperationCallbacks(agent, config, teleop)
+        teleoperator = Teleoperator()
+        teleoperator.start_process()
         env = robot_drivers[args.robot_driver]()
-        agent = Agent(env, vae, teleop=teleop, device=torch_device, config=config, train=train, callbacks=callbacks)
+        callbacks = TeleoperationCallbacks(env, config, teleoperator=teleoperator)
+        agent = Agent(env, vae, device=torch_device, config=config, train=train, callbacks=callbacks)
     elif args.robot_driver == 'sim':
         driver = robot_drivers[args.robot_driver](args.sim_path, args.sim_host, args.sim_port, args.sim_track)
         env = driver()

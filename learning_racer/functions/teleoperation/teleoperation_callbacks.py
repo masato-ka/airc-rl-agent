@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from functions.base import BaseAgentCallbacks
+from learning_racer.functions.base import BaseAgentCallbacks
 
 from logging import getLogger
 
@@ -31,8 +31,8 @@ def real_world_reward(action, done, min_throttle, max_throttle,
 
 class TeleoperationCallbacks(BaseAgentCallbacks):
 
-    def __init__(self, agent, config, teleoperator):
-        super(TeleoperationCallbacks, self).__init__(agent, config)
+    def __init__(self, env, config, teleoperator):
+        super(TeleoperationCallbacks, self).__init__(env, config)
         self.teleoperator = teleoperator
 
     # StableBaselines3 Callbacks
@@ -49,22 +49,23 @@ class TeleoperationCallbacks(BaseAgentCallbacks):
     def on_pre_step_callback(self, action):
         return action
 
-    def on_post_step_callback(self, action, observe, reward, done, info, z):
+    def on_post_step_callback(self, action, observe, reward, done, info, z, train):
         # Override Done event.
-        done = self._done_override(action, observe, reward, done, info, z)
+        done = self._done_override(action, observe, reward, done, info, z, train)
         # Override Reward value.
-        reward, done = real_world_reward(action, done, self.config.min_throttle(), self.config.max_throttle(),
-                                         self.config.crash_reward(), self.config.crash_reward_weight(),
-                                         self.config.throttle_reward_weight())
+        reward, done = real_world_reward(action, done, self.config.agent_min_throttle(),
+                                         self.config.agent_max_throttle(),
+                                         self.config.reward_reward_crash(), self.config.reward_crash_reward_weight(),
+                                         self.config.reward_throttle_reward_weight())
 
         return action, observe, reward, done, info, z
 
-    def _done_override(self, action, observe, reward, done, info, z):
-        if self.teleop is not None:
-            done = self.teleop.status
-            if done and self.train:
+    def _done_override(self, action, observe, reward, done, info, z, train):
+        if self.teleoperator is not None:
+            done = self.teleoperator.status
+            if done and train:
                 self.env.step(np.array([0., 0.]))
-                self.teleop.send_status(False)
+                self.teleoperator.send_status(False)
         return done
 
     def on_pre_reset(self):

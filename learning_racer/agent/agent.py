@@ -1,13 +1,7 @@
 import torch
-
-import PIL
-
 import numpy as np
-
 from gym import Env, spaces
-from torchvision.transforms import transforms
-
-from agent.utils import pre_process_image
+from learning_racer.agent.utils import pre_process_image
 
 
 class Agent(Env):
@@ -61,6 +55,7 @@ class Agent(Env):
         return action
 
     def _concat_action_history(self, z, action_history):
+        observe_action_history = None
         if self.n_command_history > 0:
             observe_action_history = np.concatenate([z, np.asarray(action_history)], 0)
         return observe_action_history
@@ -83,7 +78,7 @@ class Agent(Env):
         observe_action_history = self._concat_action_history(z, self.action_history)
 
         action, observe, reward, done, info, z = \
-            self.callbacks.on_post_step_callback(action, observe, reward, done, e_i, z)
+            self.callbacks.on_post_step_callback(action, observe, reward, done, e_i, z, self.train)
 
         return observe_action_history, reward, done, e_i
 

@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from logging import getLogger
 
 import gym
@@ -9,7 +9,7 @@ logger = getLogger(__name__)
 
 class BaseAgentCallbacks(BaseCallback):
 
-    def __init__(self, config, env: gym.Env, verbose=0):
+    def __init__(self, env: gym.Env, config, verbose=0):
         super(BaseAgentCallbacks, self).__init__(verbose)
         self.config = config
         self.env = env
@@ -19,7 +19,7 @@ class BaseAgentCallbacks(BaseCallback):
         raise NotImplementedError
 
     @abstractmethod
-    def on_post_step_callback(self, action, observe, reward, done, info, z):
+    def on_post_step_callback(self, action, observe, reward, done, info, z, train):
         raise NotImplementedError
 
     @abstractmethod
