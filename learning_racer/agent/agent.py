@@ -1,27 +1,21 @@
 import torch
-import PIL
-
 import numpy as np
-
 from gym import Env, spaces
-from torchvision.transforms import transforms
+from learning_racer.agent.utils import pre_process_image
 
 
 class Agent(Env):
 
-    def __init__(self, _wrapped_env, vae, teleop, device, reward_callback=None, config=None, train=True):
+    def __init__(self, _wrapped_env, vae, device, config=None, train=True, callbacks=None):
 
         self.config = config
         self.train = train
         self._wrapped_env = _wrapped_env
         self.vae = vae
         self.z_dim = vae.z_dim
-        self.teleop = teleop
         self.device = device
-        self.reward_callback = reward_callback
         self.n_commands = 2
         self.n_command_history = config.agent_n_command_history()
-        self.reward_callback = reward_callback
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
                                             shape=(self.z_dim + (self.n_commands * self.n_command_history), ),
@@ -29,12 +23,12 @@ class Agent(Env):
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
                                        high=np.array([config.agent_max_steering(), 1]), dtype=np.float32)
+        self.callbacks = callbacks
 
     def _calc_reward(self, action, done, i_e):
         pass
 
     def _record_action(self, action):
-
         if len(self.action_history) >= self.n_command_history * self.n_commands:
             del self.action_history[:2]
         for v in action:
@@ -60,6 +54,8 @@ class Agent(Env):
         action = self._smoothing_action(action)
         return action
 
+    def _concat_action_history(self, z, action_history):
+        observe_action_history = None
     def _preprocess_observation(self, observation):
         """
         Preprocess an observation from the environment.
@@ -108,8 +104,13 @@ class Agent(Env):
         z = z.cpu().numpy()[0]
         # observe = self._encode_image(observe)
         if self.n_command_history > 0:
-            z = np.concatenate([z, np.asarray(self.action_history)], 0)
-        return z
+            observe_action_history = np.concatenate([z, np.asarray(action_history)], 0)
+        return observe_action_history
+
+    def encode_observe(self, observe):
+        t_img = pre_process_image(observe)
+        z, _, _ = self.vae.encode(t_img.to(self.device))
+        return z, t_img
 
     def _is_auto_stop(self, reconst, sigma, observe_img):
         """
@@ -127,50 +128,35 @@ class Agent(Env):
 
     def step(self, action):
 
+        action = self.callbacks.on_pre_step_callback(action)
         action = self._preprocess_action(action)
+
         observe, reward, done, e_i = self._wrapped_env.step(action)
         img_t = self._preprocess_observation(observe).to(self.device)
         z = self._encode_image(img_t)
         observe = self._postprocess_observe(z, action)
         reconst, sigma = self._decode_image(torch.unsqueeze(z, dim=0))
 
-        # Enable auto stop when config.yml is set
-        if self.config.vae_auto_stop():
-            if self._is_auto_stop(reconst, sigma, torch.unsqueeze(img_t, dim=0)):
-                print("Auto stop")
-                done = True
-                if self.teleop is not None:
-                    self.teleop.status = True
+        self._record_action(action)
+        z, t_img = self.encode_observe(observe)
+        z = torch.squeeze(z.detach()).cpu().numpy()
+        observe_action_history = self._concat_action_history(z, self.action_history)
 
-        # Override Done event.
-        if (self.teleop is not None) and not self.config.vae_auto_stop():
-            # Teleop.status == True is a stop signal.
-            done = self.teleop.status
+        action, observe, reward, done, info, z = \
+            self.callbacks.on_post_step_callback(action, observe, reward, done, e_i, z, self.train)
 
-        if self.reward_callback is not None:
-            # Override reward.
-            reward, done = self.reward_callback(action, e_i, done)
-
-        if done and self.train:
-            self._wrapped_env.step(np.array([0.,0.]))
-            if self.teleop is not None:
-                # slf.teleop.send_status == False is a STOP signal.
-                # Change disable checkbox on notebook.
-                self.teleop.send_status(False)
-
-        return observe, reward, done, e_i
+        return observe_action_history, reward, done, e_i
 
     def reset(self):
         print('====RESET')
         # Waiting RESET for teleoperation.
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         observe = self._wrapped_env.reset()
-        img_t = self._preprocess_observation(observe).to(self.device)
-        o = self._encode_image(img_t)
-        o = o.cpu().numpy()[0]
+        z, _ = self.encode_observe(observe)
+        z = torch.squeeze(z.detach()).cpu().numpy()
         if self.n_command_history > 0:
-            o = np.concatenate([o, np.asarray(self.action_history)], 0)
-        return o
+            z = np.concatenate([z, np.asarray(self.action_history)], 0)
+        return z
 
     def render(self):
         self._wrapped_env.render()
