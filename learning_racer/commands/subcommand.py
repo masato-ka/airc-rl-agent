@@ -1,6 +1,8 @@
 import torch
 
 from stable_baselines3 import SAC
+
+from learning_racer.functions.auto_stop import AutoStopCallbacks
 from learning_racer.functions.simulator import SimulatorCallbacks
 from learning_racer.functions.teleoperation import TeleoperationCallbacks
 from learning_racer.agent.agent import Agent
@@ -38,12 +40,14 @@ def _init_agent(args, config, train=True):
         teleoperator = Teleoperator()
         teleoperator.start_process()
         env = robot_drivers[args.robot_driver]()
-        callbacks = TeleoperationCallbacks(env, config, teleoperator=teleoperator)
+        if config.vae_auto_stop():
+            callbacks = AutoStopCallbacks(env, config, teleoperator=teleoperator, vae=vae)
+        else:
+            callbacks = TeleoperationCallbacks(env, config, teleoperator=teleoperator)
         agent = Agent(env, vae, device=torch_device, config=config, train=train, callbacks=callbacks)
     elif args.robot_driver == 'sim':
         driver = robot_drivers[args.robot_driver](args.sim_path, args.sim_host, args.sim_port, args.sim_track)
         env = driver()
-        #        env.set_reward_fn(reward_sim)
         callbacks = SimulatorCallbacks(config, env)
         agent = Agent(env, vae, device=torch_device, config=config, train=train, callbacks=callbacks)
     else:

@@ -18,15 +18,12 @@ class Agent(Env):
         self.n_command_history = config.agent_n_command_history()
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
                                             high=np.finfo(np.float32).max,
-                                            shape=(self.z_dim + (self.n_commands * self.n_command_history), ),
+                                            shape=(self.z_dim + (self.n_commands * self.n_command_history),),
                                             dtype=np.float32)
         self.action_history = [0.] * (self.n_command_history * self.n_commands)
         self.action_space = spaces.Box(low=np.array([config.agent_min_steering(), -1]),
                                        high=np.array([config.agent_max_steering(), 1]), dtype=np.float32)
         self.callbacks = callbacks
-
-    def _calc_reward(self, action, done, i_e):
-        pass
 
     def _record_action(self, action):
         if len(self.action_history) >= self.n_command_history * self.n_commands:
@@ -35,7 +32,7 @@ class Agent(Env):
             self.action_history.append(v)
 
     def _scaled_action(self, action):
-        #Convert from [-1, 1] to [0, 1]
+        # Convert from [-1, 1] to [0, 1]
         t = (action[1] + 1) / 2
         action[1] = (1 - t) * self.config.agent_min_throttle() + self.config.agent_max_throttle() * t
         return action
@@ -56,53 +53,6 @@ class Agent(Env):
 
     def _concat_action_history(self, z, action_history):
         observe_action_history = None
-    def _preprocess_observation(self, observation):
-        """
-        Preprocess an observation from the environment.
-        :param observation: NumPy array of shape (160, 120, 3)
-        :return: Tensor of shape (3, 160, 80)
-        """
-        observe = PIL.Image.fromarray(observation)
-        observe = observe.resize((160, 120))
-        croped = observe.crop((0, 40, 160, 120))
-        o = transforms.ToTensor()(croped)
-        # o = torch.from_numpy(croped.astype(np.float32)).clone()
-        return o
-
-    def _encode_image(self, img_t):
-        """
-        Encode an image into a latent vector.
-        :param img_t: Tensor of shape (3, 160, 120) on device
-        :return: Tensor of shape (1, z_dim) on device
-        """
-        # observe = PIL.Image.fromarray(image)
-        # observe = observe.resize((160,120))
-        # croped = observe.crop((0, 40, 160, 120))
-        # #self.teleop.set_current_image(croped)
-        # tensor = transforms.ToTensor()(croped)
-        z, _, _ = self.vae.encode(torch.unsqueeze(img_t, dim=0))
-        return z.detach()
-
-    def _decode_image(self, z):
-        """
-         Decode a latent vector into an image.
-
-        :param z: Tensor of shape (1, z_dim) on device
-        :return (mu_image,sigma_y): Turple tensor of shape (3, 160, 120) on device
-        """
-        mu_image, sigma_y = self.vae.decode(z)
-        return mu_image.detach(), sigma_y.detach()
-
-    def _postprocess_observe(self, z, action):
-        """
-        Concatenate the latent vector and the action history.
-        :param z: Tensor of shape (1, z_dim) on device
-        :param action: numpy
-        :return: np.array of shape (1, z_dim + n_commands * n_command_history)
-        """
-        self._record_action(action)
-        z = z.cpu().numpy()[0]
-        # observe = self._encode_image(observe)
         if self.n_command_history > 0:
             observe_action_history = np.concatenate([z, np.asarray(action_history)], 0)
         return observe_action_history
@@ -112,38 +62,20 @@ class Agent(Env):
         z, _, _ = self.vae.encode(t_img.to(self.device))
         return z, t_img
 
-    def _is_auto_stop(self, reconst, sigma, observe_img):
-        """
-        Calculate the difference between the reconstructed image and the original image.
-        :param reconst: Tensor of shape (160, 120, 3)
-        :param observe_img: Tensor of shape (160, 120, 3)
-        :return:
-        """
-        m_vae_loss = (observe_img - reconst) ** 2 / sigma ** 2
-        m_vae_loss = 0.5 * torch.sum(m_vae_loss)
-        # bce_loss = torch.mean(torch.sum(observe_img*torch.log(reconst_img)+(1-observe_img)*torch.log(1-reconst_img), dim=1))
-        # bce_loss = F.binary_cross_entropy(reconst_img.view(-1,38400), observe_img.view(-1,38400), reduction='sum')
-        print(m_vae_loss.item())
-        return m_vae_loss.item() > self.config.vae_auto_stop_threshold()
-
     def step(self, action):
 
         action = self.callbacks.on_pre_step_callback(action)
         action = self._preprocess_action(action)
 
         observe, reward, done, e_i = self._wrapped_env.step(action)
-        img_t = self._preprocess_observation(observe).to(self.device)
-        z = self._encode_image(img_t)
-        observe = self._postprocess_observe(z, action)
-        reconst, sigma = self._decode_image(torch.unsqueeze(z, dim=0))
 
         self._record_action(action)
         z, t_img = self.encode_observe(observe)
         z = torch.squeeze(z.detach()).cpu().numpy()
         observe_action_history = self._concat_action_history(z, self.action_history)
 
-        action, observe, reward, done, info, z = \
-            self.callbacks.on_post_step_callback(action, observe, reward, done, e_i, z, self.train)
+        action, t_img, reward, done, info, z = \
+            self.callbacks.on_post_step_callback(action, t_img, reward, done, e_i, z, self.train)
 
         return observe_action_history, reward, done, e_i
 
@@ -179,7 +111,7 @@ class Agent(Env):
                 steering = self.action_history[-2 * (i + 1)]
                 prev_steering = self.action_history[-2 * (i + 2)]
                 steering_diff = (prev_steering - steering) / (
-                            self.config.agent_max_steering - self.config.agent_min_steering)
+                        self.config.agent_max_steering - self.config.agent_min_steering)
 
                 if abs(steering_diff) > self.config.agent_max_steering_diff:
                     error = abs(steering_diff) - self.config.agent_max_steering_diff

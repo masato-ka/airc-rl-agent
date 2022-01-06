@@ -19,7 +19,7 @@ class BaseAgentCallbacks(BaseCallback):
         raise NotImplementedError
 
     @abstractmethod
-    def on_post_step_callback(self, action, observe, reward, done, info, z, train):
+    def on_post_step_callback(self, action, t_img, reward, done, info, z, train):
         raise NotImplementedError
 
     @abstractmethod
