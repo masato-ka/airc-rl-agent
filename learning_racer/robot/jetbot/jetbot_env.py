@@ -18,7 +18,7 @@ MAX_THROTTLE = 1.0
 class JetbotEnv(Env):
 
     def __init__(self, *args, **kwargs):
-        super(JetbotEnv, self).__init__(*args, **kwargs)
+        super(JetbotEnv, self).__init__()
         self.controller = RobotController()
         self.observer = Observer(IMAGE_WIDTH, IMAGE_HEIGHT)
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,

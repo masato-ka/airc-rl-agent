@@ -1,6 +1,6 @@
 import math
 
-from agent.interface.base_wrapped_env import BaseWrappedEnv
+from learning_racer.agent.interface.base_wrapped_env import BaseWrappedEnv
 
 
 def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_reward_weight):

@@ -84,7 +84,7 @@ def racer_func():
         try:
             args.handler(args, config)
         except Exception as ex:
-            print(ex)
+            raise ex
             exit(-1)
     else:
         parser.print_help()
