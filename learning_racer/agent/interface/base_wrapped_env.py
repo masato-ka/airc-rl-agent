@@ -16,7 +16,7 @@ class BaseWrappedEnv(Env):
         super(BaseWrappedEnv, self).__init__(*args)
         self.vae = vae
         self.env = env
-        self.device = vae.device
+        self.device = next(vae.parameters()).device
         self.config = config
         self.train = True
         self.z_dim = vae.z_dim

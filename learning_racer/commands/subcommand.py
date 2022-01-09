@@ -2,8 +2,8 @@ import gym
 import torch
 
 from stable_baselines3 import SAC
-from learning_racer.agent import StableBaselineCallback, TeleoperationEnv
-from learning_racer.agent.simulator import SimulatorEnv
+
+from learning_racer.agent import StableBaselineCallback, TeleoperationEnv, SimulatorEnv, AutoStopEnv
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.sac import CustomSAC
 from learning_racer.teleoperate import Teleoperator
@@ -30,8 +30,8 @@ env_config = {
         'parts': {'teleoperator': 'learning_racer.teleoperate:Teleoperator'},
     },
     'jetbot-auto': {
-        'robot_name': 'jetbot',
-        'wrapped_env': 'learning_racer.agent.auto_stop:AutoStopEnv',
+        'robot_name': 'jetbot-v0',
+        'wrapped_env': 'learning_racer.agent.auto_stop_env:AutoStopEnv',
         'conf': {},
         'parts': {},
     },
@@ -73,6 +73,10 @@ def load_wrapped_env(env_name, env, vae, config, train=True):
         teleoperator = Teleoperator()
         teleoperator.start_process()
         wrapped_env = TeleoperationEnv(teleoperator, env, vae, config)
+    elif env_name == "learning_racer.agent.auto_stop_env:AutoStopEnv":
+        teleoperator = Teleoperator()
+        teleoperator.start_process()
+        wrapped_env = AutoStopEnv(teleoperator, env, vae, config)
     elif env_name == 'learning_racer.agent.simulator_env:SimulatorEnv':
         wrapped_env = SimulatorEnv(env, vae, config)
     else:

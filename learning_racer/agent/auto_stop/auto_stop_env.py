@@ -1,11 +1,11 @@
 import time
 import numpy as np
 import torch
+
+from learning_racer.agent import BaseWrappedEnv
 from logging import getLogger
 
 logger = getLogger(__name__)
-
-from learning_racer.functions.base import BaseAgentCallbacks
 
 
 def real_world_reward(action, done, min_throttle, max_throttle,
@@ -29,13 +29,11 @@ def real_world_reward(action, done, min_throttle, max_throttle,
     return 1 + throttle_reward, done
 
 
-class AutoStopCallbacks(BaseAgentCallbacks):
+class AutoStopEnv(BaseWrappedEnv):
 
-    def __init__(self, env, config, teleoperator, vae):
-        super(AutoStopCallbacks, self).__init__(env, config)
-        self.vae = vae
+    def __init__(self, teleoperator, *args, **kwargs):
+        super(AutoStopEnv, self).__init__(*args, **kwargs)
         self.teleoperator = teleoperator
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # StableBaselines3 Callbacks
     def on_rollout_start(self) -> None:
@@ -47,6 +45,10 @@ class AutoStopCallbacks(BaseAgentCallbacks):
                     logger.info("Press START.")
                 message = False
                 time.sleep(0.1)
+
+    def on_training_end(self) -> None:
+        logger.info("Trainig finished.")
+        return
 
     def on_pre_step_callback(self, action):
         return action
