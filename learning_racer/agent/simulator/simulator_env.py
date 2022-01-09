@@ -1,6 +1,6 @@
 import math
 
-from learning_racer.functions.base import BaseAgentCallbacks
+from agent.interface.base_wrapped_env import BaseWrappedEnv
 
 
 def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_reward_weight):
@@ -12,10 +12,13 @@ def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_rew
     return 1 + throttle_reward - math.fabs(cte / 5.0)
 
 
-class SimulatorCallbacks(BaseAgentCallbacks):
+class SimulatorEnv(BaseWrappedEnv):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SimulatorEnv, self).__init__(*args, **kwargs)
+
+    def on_rollout_start(self) -> None:
+        return None
 
     def on_training_end(self) -> None:
         self.env.close()
@@ -29,7 +32,7 @@ class SimulatorCallbacks(BaseAgentCallbacks):
         return action, observe, reward, done, info, z
 
     def on_pre_reset(self):
-        pass
+        return
 
     def on_post_reset(self, observe):
         return observe

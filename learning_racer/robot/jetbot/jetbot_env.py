@@ -3,21 +3,22 @@ from gym import Env, spaces
 from .core.controller import RobotController
 from .core.observer import Observer
 
-#Camera settings
+# Camera settings
 IMAGE_WIDTH = 320
 IMAGE_HEIGHT = 240
 IMAGE_SIZE = (IMAGE_WIDTH, IMAGE_HEIGHT)
 
-#Actuator settings
+# Actuator settings
 MIN_STEERING = 1.0
 MAX_STEERING = -1.0
 MIN_THROTTLE = 0.0
 MAX_THROTTLE = 1.0
 
+
 class JetbotEnv(Env):
 
-    def __init__(self):
-        super(JetbotEnv, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(JetbotEnv, self).__init__(*args, **kwargs)
         self.controller = RobotController()
         self.observer = Observer(IMAGE_WIDTH, IMAGE_HEIGHT)
         self.observation_space = spaces.Box(low=np.finfo(np.float32).min,
@@ -30,7 +31,7 @@ class JetbotEnv(Env):
 
         self.observer.start()
 
-    def step(self, action):
+    def step(self, action: np.ndarray):
         self.controller.action(action[0], action[1])
         obs = self.observer.observation()
         reward = 1.0
@@ -39,14 +40,14 @@ class JetbotEnv(Env):
         pass
 
     def reset(self):
-        self.controller.action(0,0)
+        self.controller.action(0, 0)
         obs = self.observer.observation()
         return obs
 
     def render(self, mode='human'):
         pass
 
-    def seed(self,seed):
+    def seed(self, seed):
         pass
 
     def close(self):

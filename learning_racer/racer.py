@@ -49,15 +49,15 @@ parser_demo = subparser.add_parser('demo', help='see `demo -h`')
 parser_demo.add_argument('-config', '--config-path', help='Path to a config.yml path.',
                          default='config.yml', type=str)
 parser_demo.add_argument('-vae', '--vae-path', help='Path to a trained vae model path.',
-                    default='vae.torch', type=str)
+                         default='vae.torch', type=str)
 parser_demo.add_argument('-model', '--model-path', help='Path to a trained vae model path.',
-                    default='model', type=str)
+                         default='model', type=str)
 parser_demo.add_argument('-device', '--device', help='torch device {"cpu" | "cuda"}',
-                    default='cuda', type=str)
+                         default='cuda', type=str)
 parser_demo.add_argument('-robot', '--robot-driver', help='choose robot driver',
-                    default='jetbot', type=str)
+                         default='jetbot', type=str)
 parser_demo.add_argument('-steps', '--time-steps', help='total step.',
-                    default='5000', type=int)
+                         default='5000', type=int)
 parser_demo.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
                          default='remote', type=str)
 parser_demo.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
@@ -78,16 +78,17 @@ parser_demo.set_defaults(handler=command_demo)
 def racer_func():
     config = ConfigReader()
     args = parser.parse_args()
-    try:
-        config.load(args.config_path)
-    except AttributeError:
-        logger.error("Choose subcommand from [train, demo]. See in README.md.")
-        exit(-1)
+    config.load(args.config_path)
 
     if hasattr(args, 'handler'):
-        args.handler(args, config)
+        try:
+            args.handler(args, config)
+        except Exception as ex:
+            print(ex)
+            exit(-1)
     else:
         parser.print_help()
+
 
 if __name__ == '__main__':
     racer_func()

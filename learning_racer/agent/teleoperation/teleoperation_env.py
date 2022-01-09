@@ -1,7 +1,9 @@
 import time
 
 import numpy as np
-from learning_racer.functions.base import BaseAgentCallbacks
+
+from learning_racer.agent import BaseWrappedEnv
+from learning_racer.teleoperate import Teleoperator
 
 from logging import getLogger
 
@@ -29,13 +31,15 @@ def real_world_reward(action, done, min_throttle, max_throttle,
     return 1 + throttle_reward, done
 
 
-class TeleoperationCallbacks(BaseAgentCallbacks):
+class TeleoperationEnv(BaseWrappedEnv):
 
-    def __init__(self, env, config, teleoperator):
-        super(TeleoperationCallbacks, self).__init__(env, config)
+    def __init__(self, teleoperator: Teleoperator, *args, **kwargs):
+        super(TeleoperationEnv, self).__init__(*args, **kwargs)
         self.teleoperator = teleoperator
 
-    # StableBaselines3 Callbacks
+    def on_training_end(self) -> None:
+        pass
+
     def on_rollout_start(self) -> None:
         if self.teleoperator is not None:
             self.teleoperator.send_status(True)
@@ -60,6 +64,12 @@ class TeleoperationCallbacks(BaseAgentCallbacks):
 
         return action, observe, reward, done, info, z
 
+    def on_pre_reset(self):
+        return None
+
+    def on_post_reset(self, observe):
+        return observe
+
     def _done_override(self, action, observe, reward, done, info, z, train):
         if self.teleoperator is not None:
             done = self.teleoperator.status
@@ -67,9 +77,3 @@ class TeleoperationCallbacks(BaseAgentCallbacks):
                 self.env.step(np.array([0., 0.]))
                 self.teleoperator.send_status(False)
         return done
-
-    def on_pre_reset(self):
-        return
-
-    def on_post_reset(self, observe):
-        return observe
