@@ -19,9 +19,10 @@ MAX_STEERING = -1.0
 MIN_THROTTLE = 0.0
 MAX_THROTTLE = 1.0
 
+
 class JetRacerEnv(Env):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super(JetRacerEnv, self).__init__()
         self.controller = RobotController(config)
         self.observer = Observer(IMAGE_WIDTH, IMAGE_HEIGHT)
@@ -35,7 +36,7 @@ class JetRacerEnv(Env):
 
         self.observer.start()
 
-    def step(self, action):
+    def step(self, action: np.ndarray):
         self.controller.action(action[0], action[1])
         obs = self.observer.observation()
         reward = 1.0
@@ -44,14 +45,14 @@ class JetRacerEnv(Env):
         pass
 
     def reset(self):
-        self.controller.action(0,0)
+        self.controller.action(0, 0)
         obs = self.observer.observation()
         return obs
 
     def render(self, mode='human'):
         pass
 
-    def seed(self,seed):
+    def seed(self, seed):
         pass
 
     def close(self):
