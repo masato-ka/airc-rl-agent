@@ -36,7 +36,7 @@ class AutoStopEnv(BaseWrappedEnv):
         self.teleoperator = teleoperator
 
     # StableBaselines3 Callbacks
-    def on_rollout_start(self) -> None:
+    def on_rollout_start(self):
         if self.teleoperator is not None:
             self.teleoperator.send_status(True)
             message = True
@@ -80,7 +80,7 @@ class AutoStopEnv(BaseWrappedEnv):
         reconst, sigma = self._decode_image(z.to(self.device))
         if self._is_auto_stop(reconst, sigma, t_img.to(self.device)):
             done = True
-            self.teleoperator.status = True
+            # self.teleoperator.status = True
             if done and train:
                 self.env.step(np.array([0., 0.]))
                 self.teleoperator.send_status(False)
@@ -95,6 +95,17 @@ class AutoStopEnv(BaseWrappedEnv):
         return action, t_img, reward, done, info, z
 
     def on_pre_reset(self):
+        time.sleep(0.5)
+        reverse_action = self.action_history.copy()
+        reverse_action = np.reshape(reverse_action, (-1, 2))[::-1]
+        reverse_action *= -1.0
+        reverse_history = np.append(reverse_action, np.array([[0., 0.]]), axis=0)
+        print("Playback")
+        print(self.action_history)
+        for action in reverse_history:
+            observe, reward, done, e_i = self.env.step(action)
+            time.sleep(0.03)
+        time.sleep(0.5)
         return
 
     def on_post_reset(self, observe):
