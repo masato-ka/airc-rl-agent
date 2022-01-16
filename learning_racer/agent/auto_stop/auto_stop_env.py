@@ -104,7 +104,11 @@ class AutoStopEnv(BaseWrappedEnv):
         print(self.action_history)
         for action in reverse_history:
             observe, reward, done, e_i = self.env.step(action)
-            time.sleep(0.03)
+            z, t_img = self.encode_observe(observe)
+            reconst, sigma = self._decode_image(z)
+            if not self._is_auto_stop(reconst, sigma, t_img.to(self.device)):
+                pass
+            time.sleep(0.01)
         time.sleep(0.5)
         return
 

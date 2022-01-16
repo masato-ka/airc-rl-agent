@@ -7,7 +7,7 @@ def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_rew
     """'pos': (self.x, self.y, self.z), 'cte': self.cte,
                "speed": self.speed, "hit": self.hit"""
     if done:
-        return crash_reward + crash_reward_weight * (speed / 18.0)
+        return crash_reward - crash_reward_weight * (speed / 18.0)
     throttle_reward = throttle_reward_weight * (speed / 18.0)
     return 1 + throttle_reward - math.fabs(cte / 5.0)
 
