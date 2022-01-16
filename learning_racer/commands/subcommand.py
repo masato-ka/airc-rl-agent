@@ -3,6 +3,7 @@ import torch
 
 from stable_baselines3 import SAC
 
+from agent.simulator.simulator_auto_stop_env import SimulatorAutoStopEnv
 from learning_racer.agent import StableBaselineCallback, TeleoperationEnv, SimulatorEnv, AutoStopEnv
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.sac import CustomSAC
@@ -41,6 +42,13 @@ env_config = {
         'conf': {"exe_path": "remote", "port": 9091, "host": "127.0.0.1", "frame_skip": 1},
         'parts': {},
     },
+    'sim-auto': {
+        'robot_name': 'donkey-generated-track-v0',
+        'wrapped_env': 'learning_racer.agent.simulator_env:SimulatorAutoStopEnv',
+        'conf': {"exe_path": "remote", "port": 9091, "host": "127.0.0.1", "frame_skip": 1},
+        'parts': {},
+    }
+
 }
 
 
@@ -79,6 +87,8 @@ def load_wrapped_env(env_name, env, vae, config, train=True):
         wrapped_env = AutoStopEnv(teleoperator, env, vae, config)
     elif env_name == 'learning_racer.agent.simulator_env:SimulatorEnv':
         wrapped_env = SimulatorEnv(env, vae, config)
+    elif env_name == 'learning_racer.agent.simulator_env:SimulatorAutoStopEnv':
+        wrapped_env = SimulatorAutoStopEnv(env, vae, config)
     else:
         logger.error("Specify env name can not find. Please specify correct env name in config.yaml file.")
         raise OptionsValueError(
@@ -103,7 +113,7 @@ def command_demo(args, config):
     torch_device = args.device
     vae = load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     env = load_pure_env(args.robot_driver)
-    wrapped_env = load_wrapped_env(env, vae, args, config, train=False)
+    wrapped_env = load_wrapped_env(env_config[args.robot_driver]['wrapped_env'], env, vae, config, train=False)
     model = SAC.load(args.model_path)
     obs = wrapped_env.reset()
     for step in range(args.time_steps):
