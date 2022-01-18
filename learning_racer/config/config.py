@@ -18,9 +18,9 @@ class ConfigReader:
         self.reward = None
         self.agent = None
         self.config = None
+        self.env_conf = None
 
-
-    def load(self,file_path='config.yml'):
+    def load(self, file_path='config.yml'):
 
         with open(file_path, 'r') as f:
             self.config = load(f, Loader=Loader)
@@ -28,6 +28,30 @@ class ConfigReader:
         self.reward = self.config.get('REWARD_SETTING')
         self.agent = self.config.get('AGENT_SETTING')
         self.jetracer = self.config.get("JETRACER_SETTING")
+        self.env_conf = self.config.get('ENV_CONFIG')
+
+    def get_env_conf_robot_name(self, key):
+        try:
+            return self.env_conf[key]['robot_name']
+        except KeyError:
+            return None
+
+    def get_env_conf_wrapped_env(self, key):
+        return self.env_conf[key]['wrapped_env']
+
+    def get_env_conf_conf(self, key):
+        try:
+            conf = self.env_conf[key]['conf']
+        except KeyError:
+            conf = {}
+        return conf
+
+    def get_env_conf_parts(self, key):
+        try:
+            parts = self.env_conf[key]['parts']
+        except KeyError:
+            parts = {}
+        return parts
 
     def sac_log_interval(self):
         return self.sac.get('LOG_INTERVAL')
