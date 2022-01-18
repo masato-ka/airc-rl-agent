@@ -26,9 +26,8 @@ class SimulatorAutoStopEnv(SimulatorEnv):
         """
         m_vae_loss = (observe_img - reconst) ** 2 / sigma
         m_vae_loss = 0.5 * torch.sum(m_vae_loss)
-        # Stay trach reward
         done = m_vae_loss.item() > self.config.vae_auto_stop_threshold()
-
+        # Stay trach reward
         reward = (self.config.vae_auto_stop_threshold() - m_vae_loss.item()) * \
                  (1 / self.config.vae_auto_stop_threshold())
         norm_speed = speed / 18.0
