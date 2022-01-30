@@ -1,15 +1,20 @@
 from yaml import load
+
+from learning_racer.utils.logger import get_logger, teardown_exception_wrapper
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
 
-class ConfigReader:
+logger = get_logger(__name__)
 
+
+class ConfigReader:
     __singleton = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__singleton == None:
+        if cls.__singleton is None:
             cls.__singleton = super(ConfigReader, cls).__new__(cls)
         return cls.__singleton
 
@@ -20,8 +25,8 @@ class ConfigReader:
         self.config = None
         self.env_conf = None
 
+    @teardown_exception_wrapper(logger)
     def load(self, file_path='config.yml'):
-
         with open(file_path, 'r') as f:
             self.config = load(f, Loader=Loader)
         self.sac = self.config.get('SAC_SETTING')
@@ -146,12 +151,11 @@ class ConfigReader:
     def jetracer_throttle_offset(self):
         return self.jetracer.get('THROTTLE_OFFSET', 0.0)
 
+
 ConfigReader()
 
 if __name__ == '__main__':
     config = ConfigReader()
     config.load('../config.yml')
 
-
     print(config.sac_batch_size())
-

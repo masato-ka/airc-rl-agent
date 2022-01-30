@@ -1,10 +1,9 @@
 import argparse
 from learning_racer.commands.subcommand import command_demo, command_train
 from learning_racer.config import ConfigReader
+from learning_racer.utils.logger import get_logger
 
-from logging import getLogger
-
-logger = getLogger(__name__)
+logger = get_logger(__name__)
 
 __version__ = '1.6.0'
 
@@ -62,13 +61,13 @@ parser_demo.set_defaults(handler=command_demo)
 def racer_func():
     config = ConfigReader()
     args = parser.parse_args()
-    config.load(args.config_path)
-
+    try:
+        config.load(args.config_path)
+    except FileNotFoundError as e:
+        logger.error("Config file not found. {}".format(args.config_path))
+    logger.info('Start learning racer :{}'.format(__version__))
     if hasattr(args, 'handler'):
-        try:
-            args.handler(args, config)
-        except Exception as ex:
-            raise ex
+        args.handler(args, config)
     else:
         parser.print_help()
 

@@ -9,15 +9,16 @@ from learning_racer.agent import StableBaselineCallback, BaseWrappedEnv
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.sac import CustomSAC
 from learning_racer.vae.vae import VAE
-from logging import getLogger
+from learning_racer.utils.logger import get_logger, teardown_exception_wrapper
 
 # gym regitration
 from learning_racer.robot import JetbotEnv, JetRacerEnv
 import gym_donkeycar
 
-logger = getLogger(__name__)
+logger = get_logger(__name__)
 
 
+@teardown_exception_wrapper(logger)
 def load_vae(model_path, variants_size, image_channels, device):
     vae = VAE(image_channels=image_channels, z_dim=variants_size)
     try:
@@ -26,10 +27,16 @@ def load_vae(model_path, variants_size, image_channels, device):
         logger.error("Specify VAE model path can not find. Please specify correct vae path using -vae option.")
         raise OptionsValueError(
             "Specify VAE model path can not find. Please specify correct vae path using -vae option.")
+    except RuntimeError as ex:
+        logger.error("Malformed VAE model file. Please check VARIANT_SIZE and IMAGE_CHANNELS in config.yml.")
+        logger.error("Not compatible vae model between under 1.6.0 and 1.7.0.")
+        raise ex
     vae.to(torch.device(device)).eval()
+
     return vae
 
 
+@teardown_exception_wrapper(logger)
 def load_pure_env(driver_name: str, driver_conf: dict):
     if driver_name is None:
         logger.error("Specify robot name can not find. Please specify correct robot name using -robot option.")
@@ -40,13 +47,13 @@ def load_pure_env(driver_name: str, driver_conf: dict):
     return env
 
 
+@teardown_exception_wrapper(logger)
 def load_class(module_str, class_type):
     module_attr, class_attr = module_str.split(':')
     try:
         module = import_module(module_attr)
     except ImportError:
-        raise OptionsValueError(
-            "Specify module can not find. Please specify correct module in config.yml.")
+        raise OptionsValueError("Specify module can not find. Please specify correct module in config.yml.")
     class_module = getattr(module, class_attr)
     if inspect.isclass(class_module) and issubclass(class_module, class_type):
         return class_module
@@ -54,6 +61,7 @@ def load_class(module_str, class_type):
         raise TypeError('Wrapped environment class must be a subclass of {}'.format(class_type))
 
 
+@teardown_exception_wrapper(logger)
 def load_wrapped_env(env_name, parts, env, vae, config, train=True):
     wrapped_env_class = load_class(env_name, BaseWrappedEnv)
     args = {}
@@ -70,6 +78,7 @@ def load_wrapped_env(env_name, parts, env, vae, config, train=True):
 
 
 def command_train(args, config):
+    logger.info("Start training")
     torch_device = args.device
     vae = load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     env = load_pure_env(config.get_env_conf_robot_name(args.robot_driver),
@@ -83,6 +92,7 @@ def command_train(args, config):
 
 
 def command_demo(args, config):
+    logger.info("Start demo")
     torch_device = args.device
     vae = load_vae(args.vae_path, config.sac_variants_size(), config.sac_image_channel(), torch_device)
     env = load_pure_env(config.get_env_conf_robot_name(args.robot_driver),
