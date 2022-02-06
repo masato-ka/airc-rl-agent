@@ -1,10 +1,9 @@
 import argparse
 from learning_racer.commands.subcommand import command_demo, command_train
 from learning_racer.config import ConfigReader
+from learning_racer.utils.logger import get_logger
 
-from logging import getLogger
-
-logger = getLogger(__name__)
+logger = get_logger(__name__)
 
 __version__ = '1.6.0'
 
@@ -32,14 +31,6 @@ parser_train.add_argument('-s', '--save', help='save model file name.',
                           default='model', type=str)
 parser_train.add_argument('-l', '--load-model', help='Define pre-train model path.',
                           default='', type=str)
-parser_train.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
-                          default='remote', type=str)
-parser_train.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
-                          default='127.0.0.1', type=str)
-parser_train.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
-                          default='9091', type=int)
-parser_train.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
-                          default='donkey-generated-track-v0', type=str)
 parser_train.add_argument('-log', '--tb-log', help='Define logging directory name, If not set, Do not logging.',
                           default=None, type=str)
 parser_train.set_defaults(handler=command_train)
@@ -58,14 +49,6 @@ parser_demo.add_argument('-robot', '--robot-driver', help='choose robot driver',
                          default='jetbot', type=str)
 parser_demo.add_argument('-steps', '--time-steps', help='total step.',
                          default='5000', type=int)
-parser_demo.add_argument('-sim', '--sim-path', help='Define DonkeySim executable file path.',
-                         default='remote', type=str)
-parser_demo.add_argument('-host', '--sim-host', help='Define host IP of DonkeySim host.',
-                         default='127.0.0.1', type=str)
-parser_demo.add_argument('-port', '--sim-port', help='Define port number of DonkeySim host.',
-                         default='9091', type=int)
-parser_demo.add_argument('-track', '--sim-track', help='Define track name for DonkeySim',
-                         default='donkey-generated-track-v0', type=str)
 parser_demo.add_argument('-user', '--sim-user', help='Define user name for own car that showed DonkeySim',
                          default='anonymous', type=str)
 parser_demo.add_argument('-car', '--sim-car', help='Define car model type for own car that showed DonkeySim',
@@ -78,14 +61,13 @@ parser_demo.set_defaults(handler=command_demo)
 def racer_func():
     config = ConfigReader()
     args = parser.parse_args()
-    config.load(args.config_path)
-
+    try:
+        config.load(args.config_path)
+    except FileNotFoundError as e:
+        logger.error("Config file not found. {}".format(args.config_path))
+    logger.info('Start learning racer :{}'.format(__version__))
     if hasattr(args, 'handler'):
-        try:
-            args.handler(args, config)
-        except Exception as ex:
-            raise ex
-            exit(-1)
+        args.handler(args, config)
     else:
         parser.print_help()
 

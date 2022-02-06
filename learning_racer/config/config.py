@@ -1,15 +1,21 @@
 from yaml import load
+
+from learning_racer.utils.logger import get_logger, teardown_exception_wrapper
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
+
+logger = get_logger(__name__)
+
 
 class ConfigReader:
 
     __singleton = None
 
     def __new__(cls, *args, **kwargs):
-        if cls.__singleton == None:
+        if cls.__singleton is None:
             cls.__singleton = super(ConfigReader, cls).__new__(cls)
         return cls.__singleton
 
@@ -18,10 +24,10 @@ class ConfigReader:
         self.reward = None
         self.agent = None
         self.config = None
+        self.env_conf = None
 
-
-    def load(self,file_path='config.yml'):
-
+    @teardown_exception_wrapper(logger)
+    def load(self, file_path='config.yml'):
         with open(file_path, 'r') as f:
             self.config = load(f, Loader=Loader)
         self.sac = self.config.get('SAC_SETTING')
@@ -29,6 +35,30 @@ class ConfigReader:
         self.agent = self.config.get('AGENT_SETTING')
         self.jetracer = self.config.get("JETRACER_SETTING")
         self.auto_stop = self.config.get("VAE_AUTO_STOP")
+        self.env_conf = self.config.get('ENV_CONFIG')
+
+    def get_env_conf_robot_name(self, key):
+        try:
+            return self.env_conf[key]['robot_name']
+        except KeyError:
+            return None
+
+    def get_env_conf_wrapped_env(self, key):
+        return self.env_conf[key]['wrapped_env']
+
+    def get_env_conf_conf(self, key):
+        try:
+            conf = self.env_conf[key]['conf']
+        except KeyError:
+            conf = {}
+        return conf
+
+    def get_env_conf_parts(self, key):
+        try:
+            parts = self.env_conf[key]['parts']
+        except KeyError:
+            parts = {}
+        return parts
 
     def sac_log_interval(self):
         return self.sac.get('LOG_INTERVAL')

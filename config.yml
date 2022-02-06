@@ -1,4 +1,27 @@
 
+ENV_CONFIG:
+  jetbot:
+    robot_name: 'jetbot-v0'
+    wrapped_env: 'learning_racer.agent.teleoperation:TeleoperationEnv'
+    parts:
+      teleoperation: 'learning_racer.teleoperate:Teleoperation'
+  jetracer:
+    robot_name: 'jetracer-v0'
+    wrapped_env: 'learning_racer.agent.teleoperation:TeleoperationEnv'
+    parts:
+      teleoperation: 'learning_racer.teleoperate:Teleoperation'
+  jetbot-auto:
+    robot_name: 'jetbot-v0'
+    wrapped_env: 'learning_racer.agent.auto_stop:AutoStopEnv'
+  sim:
+    robot_name: 'donkey-generated-track-v0'
+    conf:
+      exe_path: 'remote'
+      port: 9091
+      host: 'localhost'
+    wrapped_env: 'learning_racer.agent.simulator:SimulatorEnv'
+
+
 SAC_SETTING:
   LOG_INTERVAL: 1
   VERBOSE: 1

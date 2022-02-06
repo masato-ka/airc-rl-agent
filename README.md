@@ -261,9 +261,6 @@ $ racer train -robot sim -vae <downloaded vae model path> -device cpu -host <Don
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
 |-save_freq(--save_freq_episode) |Specify how many steps to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
-|-host(--sim-host)|Define host IP of DonkeySim host.|127.0.0,1|
-|-port(--sim-port)|Define port number of DonkeySim host.|9091|
-|-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
 |-save_path(--save-model-path)| Specify the path for saved model file.|model_log|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 |-l(--load-model)|Define pre-train model path.|-|
@@ -284,9 +281,6 @@ $ racer demo -robot sim -model <own trained model path> -vae <downloaded vae mod
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
 |-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
 |-steps(--time-steps)| Specify the maximum step for demo. Modify the values ​​according to the size and complexity of the course.| 5000 |
-|-host(--sim-host)|Define host IP of DonkeySim host.|127.0.0,1|
-|-port(--sim-port)|Define port number of DonkeySim host.|9091|
-|-track(--sim-track)|Define track name for DonkeySim.|donkey-generated-trach-v0|
 |-user(--sim-user)  |Define user name for own car that showed DonkeySim |anonymous|
 |-car(--sim-car)    | Define car model type for own car that showed DonkeySim|Donkey|
 
