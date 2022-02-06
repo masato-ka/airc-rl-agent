@@ -3,7 +3,7 @@ import torch
 
 from stable_baselines3 import SAC
 
-from agent.simulator.simulator_auto_stop_env import SimulatorAutoStopEnv
+from learning_racer.agent.simulator.simulator_auto_stop_env import SimulatorAutoStopEnv
 from learning_racer.agent import StableBaselineCallback, TeleoperationEnv, SimulatorEnv, AutoStopEnv
 from learning_racer.exce.LearningRacerError import OptionsValueError
 from learning_racer.sac import CustomSAC
@@ -32,6 +32,12 @@ env_config = {
     },
     'jetbot-auto': {
         'robot_name': 'jetbot-v0',
+        'wrapped_env': 'learning_racer.agent.auto_stop_env:AutoStopEnv',
+        'conf': {},
+        'parts': {},
+    },
+    'jetracer-auto': {
+        'robot_name': 'jetracer-v0',
         'wrapped_env': 'learning_racer.agent.auto_stop_env:AutoStopEnv',
         'conf': {},
         'parts': {},

@@ -1,6 +1,6 @@
 import torch
 
-from agent import SimulatorEnv
+from learning_racer.agent import SimulatorEnv
 
 
 class SimulatorAutoStopEnv(SimulatorEnv):
