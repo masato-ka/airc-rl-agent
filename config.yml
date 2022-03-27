@@ -13,6 +13,9 @@ ENV_CONFIG:
   jetbot-auto:
     robot_name: 'jetbot-v0'
     wrapped_env: 'learning_racer.agent.auto_stop:AutoStopEnv'
+  jetracer-auto:
+    robot_name: 'jetracer-v0'
+    wrapped_env: 'learning_racer.agent.auto_stop:AutoStopEnv'
   sim:
     robot_name: 'donkey-generated-track-v0'
     conf:
@@ -71,8 +74,8 @@ AGENT_SETTING:
   N_COMMAND_HISTORY: 20
   MIN_STEERING: -1.0
   MAX_STEERING: 1.0
-  MIN_THROTTLE: 0.4 # 0.4
-  MAX_THROTTLE: 0.7 # 0.9
+  MIN_THROTTLE: 0.7 # 0.4
+  MAX_THROTTLE: 0.95 # 0.9
   MAX_STEERING_DIFF: 0.9 #0.35
 
 JETRACER_SETTING:

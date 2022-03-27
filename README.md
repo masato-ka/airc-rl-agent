@@ -202,12 +202,15 @@ When you use without_gamepad, you can check status using Validation box.
 |-config(--config-path)| Specify the file path of config.yml.    | config.yml             |
 |-vae(--vae-path)| Specify the file path of the trained VAE model.    | vae.torch             |
 |-device(--device)|Specifies whether Pytorch uses CUDA. Set 'cuda' to use. Set 'cpu' when using CPU.| cuda                 |
-|-robot(--robot-driver)| Specify the type of car to use. JetBot and JetRacer can be specified.| JetBot              |
+|-robot(--robot-driver)| Specify the type of car to use. choose from jetbot, jetracer, jetbot-auto, jetracer-auto and sim.| JetBot              |
 |-steps(--time-steps)| Specify the maximum learning step for reinforcement learning. Modify the values ​​according to the size and complexity of the course.| 5000 |
-|-save_freq(--save_freq_episode) | 
+|-save_freq(--save_freq_episode) |
 Specify how many episodes to save the policy model. The policy starts saving after the gradient calculation starts.| 10|
 |-s(--save)    | Specify the path and file name to save the model file of the training result.  | model                 |
 |-l(--load-model)|Define pre-train model path.|-|
+
+In -robot option, If you choose jetracer-auto or jetbot-auto, Auto train mode start. When this mode, Robot stop without
+human controll and pullback position where start learning.
 
 #### Running DEMO
 
