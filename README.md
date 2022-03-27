@@ -388,6 +388,12 @@ You can configuration to some hyper parameter using config.yml.
     * Improvement Function.
         * Docker installation for JetBot.
 
+* 2022/03/27 v1.7.0 release
+    * BugFix
+        * \#46 In simurator crush reward fix.
+    * Improvement Function.
+        * Release auto stop function without detail document.
+
 ## 7. Contribution
 
 * If you find bug or want to new functions, please write issue.
