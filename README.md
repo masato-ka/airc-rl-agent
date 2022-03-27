@@ -393,6 +393,8 @@ You can configuration to some hyper parameter using config.yml.
         * \#46 In simurator crush reward fix.
     * Improvement Function.
         * Release auto stop function without detail document.
+    * Other
+        * VAE model is changed. VAE models are not backward compatible.
 
 ## 7. Contribution
 
