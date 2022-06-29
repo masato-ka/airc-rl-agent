@@ -72,7 +72,7 @@ class VAE(nn.Module):
         z = self.fc3(z)
         x = self.decoder(z)
         mu_y = self.out1(x)
-        sigma_y = self.out1(x)
+        sigma_y = self.out2(x)
         return mu_y, sigma_y
 
     def forward(self, x):
