@@ -1,6 +1,10 @@
 import math
 
+from gym import Env
+
+from learning_racer.config import ConfigReader
 from learning_racer.agent.interface.base_wrapped_env import BaseWrappedEnv
+from learning_racer.vae import VAE
 
 
 def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_reward_weight):
@@ -14,8 +18,8 @@ def reward_sim(done, speed, cte, crash_reward, crash_reward_weight, throttle_rew
 
 class SimulatorEnv(BaseWrappedEnv):
 
-    def __init__(self, *args, **kwargs):
-        super(SimulatorEnv, self).__init__(*args, **kwargs)
+    def __init__(self, env: Env, vae: VAE, config: ConfigReader):
+        super(SimulatorEnv, self).__init__(env, vae, config)
 
     def on_rollout_start(self) -> None:
         return None

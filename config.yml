@@ -4,18 +4,22 @@ ENV_CONFIG:
     robot_name: 'jetbot-v0'
     wrapped_env: 'learning_racer.agent.teleoperation:TeleoperationEnv'
     parts:
-      teleoperation: 'learning_racer.teleoperate:Teleoperation'
+      teleoperator: 'learning_racer.teleoperate:Teleoperation'
   jetracer:
     robot_name: 'jetracer-v0'
     wrapped_env: 'learning_racer.agent.teleoperation:TeleoperationEnv'
     parts:
-      teleoperation: 'learning_racer.teleoperate:Teleoperation'
+      teleoperator: 'learning_racer.teleoperate:Teleoperation'
   jetbot-auto:
     robot_name: 'jetbot-v0'
     wrapped_env: 'learning_racer.agent.auto_stop:AutoStopEnv'
+    parts:
+      teleoperator: 'learning_racer.teleoperate:Teleoperation'
   jetracer-auto:
     robot_name: 'jetracer-v0'
     wrapped_env: 'learning_racer.agent.auto_stop:AutoStopEnv'
+    parts:
+      teleoperator: 'learning_racer.teleoperate:Teleoperation'
   sim:
     robot_name: 'donkey-generated-track-v0'
     conf:

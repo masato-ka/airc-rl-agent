@@ -1,9 +1,14 @@
 import time
 import numpy as np
 import torch
+from gym import Env
 
+from learning_racer.config import ConfigReader
 from learning_racer.agent import BaseWrappedEnv
 from logging import getLogger
+
+from learning_racer.teleoperate import Teleoperator
+from learning_racer.vae import VAE
 
 logger = getLogger(__name__)
 
@@ -31,10 +36,10 @@ def real_world_reward(action, done, min_throttle, max_throttle,
 
 class AutoStopEnv(BaseWrappedEnv):
 
-    def __init__(self, teleoperator, *args, **kwargs):
-        super(AutoStopEnv, self).__init__(*args, **kwargs)
+    def __init__(self, env: Env, vae: VAE, config: ConfigReader, teleoperator: Teleoperator):
+        super(AutoStopEnv, self).__init__(env, vae, config)
         self.teleoperator = teleoperator
-
+        self.teleoperator.start_process()
     # StableBaselines3 Callbacks
     def on_rollout_start(self):
         if self.teleoperator is not None:

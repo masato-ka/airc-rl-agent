@@ -12,8 +12,8 @@ from learning_racer.vae import VAE
 
 class BaseWrappedEnv(Env):
 
-    def __init__(self, env: Env, vae: VAE, config: ConfigReader, *args):
-        super(BaseWrappedEnv, self).__init__(*args)
+    def __init__(self, env: Env, vae: VAE, config: ConfigReader):
+        super(BaseWrappedEnv, self).__init__()
         self.vae = vae
         self.env = env
         self.device = next(vae.parameters()).device

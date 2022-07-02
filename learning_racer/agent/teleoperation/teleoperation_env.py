@@ -1,11 +1,15 @@
 import time
 
 import numpy as np
+from gym import Env
 
+from learning_racer.config import ConfigReader
 from learning_racer.agent import BaseWrappedEnv
 from learning_racer.teleoperate import Teleoperator
 
 from logging import getLogger
+
+from learning_racer.vae import VAE
 
 logger = getLogger(__name__)
 
@@ -33,9 +37,10 @@ def real_world_reward(action, done, min_throttle, max_throttle,
 
 class TeleoperationEnv(BaseWrappedEnv):
 
-    def __init__(self, teleoperator: Teleoperator, *args, **kwargs):
-        super(TeleoperationEnv, self).__init__(*args, **kwargs)
+    def __init__(self, env: Env, vae: VAE, config: ConfigReader, teleoperator: Teleoperator):
+        super(TeleoperationEnv, self).__init__(env, vae, config)
         self.teleoperator = teleoperator
+        self.teleoperator.start_process()
 
     def on_training_end(self) -> None:
         pass
