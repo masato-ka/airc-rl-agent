@@ -396,6 +396,15 @@ You can configuration to some hyper parameter using config.yml.
     * Other
         * VAE model is changed. VAE models are not backward compatible.
 
+* 2022/07/03 v1.7.1 relase
+    * BugFix
+        * \#47 The learning_racer.vae decoder method is outputting the distributed image incorrectly.
+        * \#38 CNN_VAE.ipynb fix.
+        * vae_viewer.ipynb fix.
+        * Can not start command for internal errors.
+    * Inprovement Function.
+        * Efficient hyperparameter in config.yml
+
 ## 7. Contribution
 
 * If you find bug or want to new functions, please write issue.

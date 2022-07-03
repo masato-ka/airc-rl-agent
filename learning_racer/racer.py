@@ -5,7 +5,7 @@ from learning_racer.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-__version__ = '1.7.0'
+__version__ = '1.7.1'
 
 parser = argparse.ArgumentParser(description='Learning Racer command.')
 parser.add_argument('--version', action='version', version='learning_racer version {} .'.format(__version__))
