@@ -44,7 +44,7 @@ SAC_SETTING:
   GAMMA: 0.99
   TAU: 0.02
   USER_SDE_AT_WARMUP: true
-  USER_SDE: true
+  USER_SDE: false
   SDE_SAMPLE_FREQ: 64
 
 
